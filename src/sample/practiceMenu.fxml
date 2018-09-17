@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox fx:controller="sample.practiceController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox maxHeight="400.0" maxWidth="200.0" minHeight="400.0" minWidth="200.0" prefHeight="400.0" prefWidth="200.0">
+         <children>
+            <Pane maxHeight="35.0" maxWidth="200.0" minHeight="35.0" minWidth="200.0" prefHeight="35.0" prefWidth="200.0">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="62.0" layoutY="6.0" text="Names:" textAlignment="CENTER">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane maxHeight="300.0" maxWidth="200.0" minHeight="300.0" minWidth="200.0" prefHeight="300.0" prefWidth="200.0">
+               <children>
+                  <ListView layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="300.0" minWidth="190.0" mouseTransparent="true" prefHeight="300.0" prefWidth="190.0" />
+               </children>
+            </Pane>
+            <Pane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <GridPane alignment="CENTER" layoutX="5.0" layoutY="7.0" prefHeight="43.0" prefWidth="190.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="prevButton" minWidth="60.0" mnemonicParsing="false" onAction="#handlePrevButton" prefWidth="60.0" text="Prev" />
+                        <Button fx:id="playButton" maxWidth="60.0" minWidth="60.0" mnemonicParsing="false" onAction="#handlePlayButton" prefWidth="60.0" text="Play" GridPane.columnIndex="1" />
+                        <Button fx:id="nextButton" maxHeight="25.0" maxWidth="60.0" minHeight="25.0" minWidth="60.0" mnemonicParsing="false" onAction="#handleNextButton" prefHeight="25.0" prefWidth="60.0" text="Next" GridPane.columnIndex="2" />
+                     </children>
+                  </GridPane>
+               </children></Pane>
+         </children>
+      </VBox>
+      <VBox maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0">
+         <children>
+            <Pane prefHeight="50.0" prefWidth="400.0">
+               <children>
+                  <HBox alignment="CENTER_LEFT" maxHeight="50.0" maxWidth="400.0" minHeight="50.0" minWidth="400.0" prefHeight="50.0" prefWidth="400.0">
+                     <children>
+                        <Pane maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" prefHeight="50.0" prefWidth="150.0">
+                           <children>
+                              <Label layoutX="14.0" layoutY="13.0" text="Practicing:">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
+                        <Label fx:id="playingLabel" text="Name">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </Pane>
+            <Pane prefHeight="150.0" prefWidth="400.0">
+               <children>
+                  <ProgressBar fx:id="recordingIndicator" layoutX="75.0" layoutY="14.0" prefHeight="25.0" prefWidth="250.0" progress="0.0" />
+                  <Button fx:id="recordButton" layoutX="160.0" layoutY="46.0" mnemonicParsing="false" onAction="#handleRecordAction" prefHeight="30.0" prefWidth="80.0" text="Record" textAlignment="CENTER" underline="true" />
+                  <Button fx:id="playRecButton" layoutX="75.0" layoutY="100.0" mnemonicParsing="false" onAction="#handlePlayRec" prefHeight="30.0" prefWidth="60.0" text="Play" />
+                  <Button fx:id="saveRecButton" layoutX="263.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleSaveRec" prefHeight="30.0" prefWidth="60.0" text="Save" />
+                  <Button fx:id="micTestButton" layoutX="263.0" layoutY="49.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#handleMicTest" prefHeight="25.0" prefWidth="25.0" />
+               </children>
+            </Pane>
+            <Pane maxHeight="200.0" maxWidth="400.0" minHeight="200.0" minWidth="400.0" prefHeight="200.0" prefWidth="400.0">
+               <children>
+                  <ListView fx:id="archiveList" onMouseClicked="#handleArcListClicked" prefHeight="70.0" prefWidth="395.0" />
+                  <GridPane alignment="CENTER" layoutX="125.0" layoutY="77.0" prefWidth="150.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="playArcButton" mnemonicParsing="false" onAction="#handlePlayArc" prefHeight="30.0" prefWidth="70.0" text="Play" />
+                        <Button fx:id="deleteArcButton" mnemonicParsing="false" onAction="#handleDeleteArc" prefHeight="30.0" prefWidth="70.0" text="Delete" GridPane.columnIndex="1" />
+                     </children>
+                  </GridPane>
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+   </children>
+</HBox>
