@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -26,26 +27,49 @@ public class Controller implements Initializable {
 
     private List<String> listOfNames;
 
-    private String _fileSelected;
+    private String fileSelected;
 
     @FXML
-    private ListView<String> namesList;
+    private ListView<String> namesListView;
 
     @FXML
     private Button practiceButton;
 
     @FXML
-    private CheckBox randomBox;
+    private CheckBox randomBox = new CheckBox();
+    private boolean isRandom = randomBox.isSelected();
 
     @FXML
     private ListView<String> archiveList;
-
+    
+    
     public static List<String> selectedList = new ArrayList<>();
 
-    private boolean isRandom = randomBox.isSelected();
-
+    
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        namesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        updateList();
+    }
+    
+    
+    // Called when program is launched to fill the ListView with files
+    public void updateList() {
+        ObservableList<String> listToView = FXCollections.observableArrayList(getListOfFiles());
+        namesListView.setItems(listToView);
+        namesListView.getSelectionModel().clearSelection();
+    }
+    
+    
+    public List<String> getListOfFiles() {
+        File nameFolder = new File(System.getProperty("user.dir"));
+        listOfNames = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        //ArrayList<File> files = new ArrayList<File>(Arrays.asList(nameFolder.listFiles()));
+        return listOfNames;
+    }
+    
+    
     public void onPracticeAction(ActionEvent actionEvent) {
-
         if (isRandom) {
             Collections.shuffle(selectedList);
         }
@@ -54,93 +78,30 @@ public class Controller implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample/practiceMenu.fxml"));
             Parent root = fxmlLoader.load();
             Stage stage = new Stage();
-            stage.setTitle("Create New Name");
+            stage.setTitle("Practice selected names");
             stage.setScene(new Scene(root, 600, 400));
             stage.show();
         } catch (IOException e){
+        	// DO SOMETHING?????
         }
 
         closeCurrentStage(practiceButton);
     }
 
 
-    public List<String> getListOfFiles() {
-        listOfNames = new ArrayList<>();
-
-        String checkNoFilesCommand = "find . -type f -name \"*.wav\" | wc -l";
-        ProcessBuilder checkNoFilesPB = new ProcessBuilder("/bin/bash", "-c", checkNoFilesCommand);
-
-
-        try {
-            Process checkNoFilesProcess = checkNoFilesPB.start();
-            InputStream fileCountOut = checkNoFilesProcess.getInputStream();
-            InputStreamReader fileCountReader = new InputStreamReader(fileCountOut);
-            BufferedReader fileCountBuffered = new BufferedReader(fileCountReader);
-            String line = fileCountBuffered.readLine();
-
-
-            if (line.equals("0")) {
-                listOfNames.add("No names in database");
-                namesList.setMouseTransparent(true);
-                namesList.setFocusTraversable(false);
-                return listOfNames;
-            } else {
-                namesList.setMouseTransparent(false);
-                namesList.setFocusTraversable(true);
-                String command = "for f in *.mp4; do printf '%s\\n' \"${f%.wav}\"; done;\n";
-                ProcessBuilder listPB = new ProcessBuilder("/bin/bash", "-c", command);
-
-
-                try {
-                    Process listProcess = listPB.start();
-
-                    InputStream stdout = listProcess.getInputStream();
-                    InputStreamReader inputReader = new InputStreamReader(stdout);
-                    BufferedReader stdoutBuffered = new BufferedReader(inputReader);
-
-                    String fileRead;
-
-                    while ((fileRead = stdoutBuffered.readLine()) != null) {
-                        listOfNames.add(fileRead);
-
-                    }
-                } catch (IOException e) {
-                }
-            }
-
-
-        } catch (IOException e) {
-        }
-
-
-        return listOfNames;
-    }
-
-    public void updateList() {
-        ObservableList<String> listToView = FXCollections.observableArrayList(getListOfFiles());
-        namesList.setItems(listToView);
-        namesList.getSelectionModel().clearSelection();
-
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        namesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        updateList();
-    }
-
     public void handleListClicked(MouseEvent mouseEvent) {
+        fileSelected = namesListView.getSelectionModel().getSelectedItem();
 
-        _fileSelected = namesList.getSelectionModel().getSelectedItem();
-
-        if (_fileSelected == null) {
+        if (fileSelected == null) {
+        	// Do nothing
         } else {
-            selectedList.add(_fileSelected);
+            selectedList.add(fileSelected);
         }
     }
 
+    
     public static void closeCurrentStage(Button button) {
-        Stage currentStage = (Stage) button.getScene().getWindow();
+        Stage currentStage = (Stage)button.getScene().getWindow();
         currentStage.close();
     }
 
@@ -148,4 +109,11 @@ public class Controller implements Initializable {
     public static List<String> getSelectedList(){
         return selectedList;
     }
+    
+    // Handle when randomise toggle button is clicked
+    public void toggleRandom() {
+    	isRandom = randomBox.isSelected();
+    }
+    
+    
 }

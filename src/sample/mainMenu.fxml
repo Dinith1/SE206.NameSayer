@@ -1,64 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.MultipleSelectionModel?>
 
-<BorderPane maxHeight="500.0" maxWidth="300.0" minHeight="500.0" minWidth="300.0" prefHeight="500.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
-   <top>
-      <Pane maxHeight="35.0" maxWidth="300.0" minHeight="35.0" minWidth="300.0" prefHeight="35.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <left>
+      <VBox alignment="TOP_CENTER" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" maxHeight="35.0" maxWidth="300.0" minHeight="35.0" minWidth="300.0" prefHeight="35.0" prefWidth="300.0" text="Name Sayer" textAlignment="CENTER">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Label>
-         </children>
-      </Pane>
-   </top>
-   <bottom>
-      <Pane maxHeight="50.0" maxWidth="300.0" prefHeight="50.0" prefWidth="300.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="practiceButton" layoutX="208.0" layoutY="12.0" mnemonicParsing="false" onAction="#onPracticeAction" text="Practice" underline="true">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Button>
-            <CheckBox fx:id="randomBox" layoutX="14.0" layoutY="16.0" mnemonicParsing="false" text="Randomise" />
-         </children>
-      </Pane>
-   </bottom>
-   <center>
-      <TabPane maxHeight="400.0" maxWidth="290.0" minHeight="400.0" minWidth="290.0" prefHeight="400.0" prefWidth="290.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-        <tabs>
-          <Tab text="Database">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <Pane maxHeight="-Infinity" maxWidth="-Infinity">
+               <children>
+                  <Label alignment="CENTER" maxHeight="35.0" maxWidth="300.0" minHeight="35.0" minWidth="300.0" prefHeight="35.0" prefWidth="300.0" text="Name Sayer" textAlignment="CENTER">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <HBox alignment="TOP_CENTER" spacing="25.0">
+               <children>
+                  <VBox alignment="TOP_CENTER" prefWidth="300.0">
                      <children>
-                        <ListView fx:id="namesList" maxHeight="360.0" maxWidth="290.0" minHeight="360.0" minWidth="290.0" onMouseClicked="#handleListClicked" prefHeight="360.0" prefWidth="290.0" />
+                        <TabPane prefWidth="300.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Database">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <ListView fx:id="namesListView" onMouseClicked="#handleListClicked" prefHeight="330.0" prefWidth="300.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab text="Attempts">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0">
+                                       <children>
+                                          <ListView fx:id="archiveList" prefHeight="330.0" prefWidth="300.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                        <Button mnemonicParsing="false" text="Add &gt;">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Button>
                      </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Attempts">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <VBox alignment="TOP_CENTER" prefWidth="300.0">
                      <children>
-                        <ListView fx:id="archiveList" maxHeight="360.0" maxWidth="290.0" minHeight="360.0" minWidth="290.0" prefHeight="360.0" prefWidth="290.0" />
+                        <Label prefHeight="30.0" text="Selected Names" />
+                        <ListView prefHeight="330.0" prefWidth="300.0" />
+                        <Button mnemonicParsing="false" text="&lt; Remove" />
                      </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-        </tabs>
-      </TabPane>
-   </center>
+                  </VBox>
+               </children>
+               <padding>
+                  <Insets right="1.0" />
+               </padding>
+            </HBox>
+            <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="700.0" spacing="50.0">
+               <children>
+                  <CheckBox fx:id="randomBox" mnemonicParsing="false" onAction="#toggleRandom" text="Randomise" />
+                  <Button fx:id="practiceButton" mnemonicParsing="false" onAction="#onPracticeAction" text="Practice" underline="true">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </HBox>
+         </children>
+      </VBox>
+   </left>
 </BorderPane>
