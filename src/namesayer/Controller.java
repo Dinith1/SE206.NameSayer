@@ -85,7 +85,7 @@ public class Controller implements Initializable {
 		}
 
 		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample/practiceMenu.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/practiceMenu.fxml"));
 			Parent root = fxmlLoader.load();
 			Stage stage = new Stage();
 			stage.setTitle("Practice selected names");
