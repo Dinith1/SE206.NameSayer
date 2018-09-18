@@ -103,6 +103,10 @@ public class Controller implements Initializable {
 		fileSelected = namesListView.getSelectionModel().getSelectedItem();
 		System.out.println("LEFT LIST: " + fileSelected);
 		selectedListView.getSelectionModel().clearSelection();
+		
+		if (mouseEvent.getClickCount() == 2) {
+			addToSelected();
+		}
 	}
 	
 	
@@ -110,6 +114,10 @@ public class Controller implements Initializable {
 		fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
 		System.out.println("RIGHT LIST: " + fileSelectedFromSelected);
 		namesListView.getSelectionModel().clearSelection();
+		
+		if (mouseEvent.getClickCount() == 2) {
+			removeFromSelected();
+		}
 	}
 
 
