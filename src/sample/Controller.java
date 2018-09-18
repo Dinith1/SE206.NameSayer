@@ -25,130 +25,132 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    private List<String> listOfNamesNotSelected;
-    private List<String> listOfNamesSelected = new ArrayList<String>();
+	private List<String> listOfNamesNotSelected;
+	private static List<String> listOfNamesSelected = new ArrayList<String>();
 
-    private String fileSelected;
+	private String fileSelected;
+	private String fileSelectedFromSelected;
 
-    @FXML
-    private ListView<String> namesListView;
-    
-    @FXML
-    private ListView<String> selectedListView;
-    
-    @FXML
-    private Button addButton;
-    
-    @FXML
-    private Button removeButton;
+	@FXML
+	private ListView<String> namesListView;
 
-    @FXML
-    private Button practiceButton;
+	@FXML
+	private ListView<String> selectedListView;
 
-    @FXML
-    private CheckBox randomBox = new CheckBox();
-    private boolean isRandom = randomBox.isSelected();
+	@FXML
+	private Button addButton;
 
-    @FXML
-    private ListView<String> archiveList;
-    
-    
-    public static List<String> selectedList = new ArrayList<>();
+	@FXML
+	private Button removeButton;
 
-    
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        namesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        initialiseListNotSelected();
-        updateListNotSelected();
-    }
-    
-    // ********* WHAT HAPPENS WHEN YOU CLOSE THE PRACTICE MENU - SHOULD SELECTED LIST BE EMPTY - OR SHOULD IT STAY FILLED
-    // WITH WHAT WAS PREVIOUSLY SELECTED, AND THE UNSELECTED LIST UPDATED WITH THE EXTRA CREATED FILES??????????
-    public void initialiseListNotSelected() {
-        File nameFolder = new File(System.getProperty("user.dir"));
-        listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
-        //ArrayList<File> files = new ArrayList<File>(Arrays.asList(nameFolder.listFiles()));
-    }
-    
-    
-    // Called when program is launched to fill the ListView with files
-    public void updateListNotSelected() {
-        ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
-        namesListView.setItems(listToView);
-        namesListView.getSelectionModel().clearSelection();
-    }
-    
-    
-    public void onPracticeAction(ActionEvent actionEvent) {
-        if (isRandom) {
-            Collections.shuffle(selectedList);
-        }
+	@FXML
+	private Button practiceButton;
 
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample/practiceMenu.fxml"));
-            Parent root = fxmlLoader.load();
-            Stage stage = new Stage();
-            stage.setTitle("Practice selected names");
-            stage.setScene(new Scene(root, 600, 400));
-            stage.show();
-        } catch (IOException e){
-        	// DO SOMETHING?????
-        }
+	@FXML
+	private CheckBox randomBox = new CheckBox();
+	private boolean isRandom = randomBox.isSelected();
 
-        closeCurrentStage(practiceButton);
-    }
+	@FXML
+	private ListView<String> archiveList;
 
 
-    public void handleListClicked(MouseEvent mouseEvent) {
-        fileSelected = namesListView.getSelectionModel().getSelectedItem();
-        System.out.println(fileSelected);
 
-        if (fileSelected != null) {
-            selectedList.add(fileSelected);
-        }
-    }
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		namesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		initialiseListNotSelected();
+		updateListNotSelected();
+	}
 
-    
-    public static void closeCurrentStage(Button button) {
-        Stage currentStage = (Stage)button.getScene().getWindow();
-        currentStage.close();
-    }
+	// ********* WHAT HAPPENS WHEN YOU CLOSE THE PRACTICE MENU - SHOULD SELECTED LIST BE EMPTY - OR SHOULD IT STAY FILLED
+	// WITH WHAT WAS PREVIOUSLY SELECTED, AND THE UNSELECTED LIST UPDATED WITH THE EXTRA CREATED FILES??????????
+	public void initialiseListNotSelected() {
+		File nameFolder = new File(System.getProperty("user.dir"));
+		listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+		//ArrayList<File> files = new ArrayList<File>(Arrays.asList(nameFolder.listFiles()));
+	}
 
 
-    public static List<String> getSelectedList(){
-        return selectedList;
-    }
-    
-    
-    // Handle when randomise toggle button is clicked
-    public void toggleRandom() {
-    	isRandom = randomBox.isSelected();
-    }
-    
-    
-    public void addToSelected() {
-        fileSelected = namesListView.getSelectionModel().getSelectedItem();
-        
-        if (fileSelected != null) {
-        	listOfNamesNotSelected.remove(fileSelected);
-        	listOfNamesSelected.add(fileSelected);
-        }
-        updateListNotSelected();
-        updateListSelected();
-    }
-    
-    
-    public void updateListSelected() {
-    	ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesSelected);
-        selectedListView.setItems(listToView);
-        selectedListView.getSelectionModel().clearSelection();
-    }
-    
-    
-    public void removeFromSelected() {
-    	
-    }
-    
-    
+	// Called when program is launched to fill the ListView with files
+	public void updateListNotSelected() {
+		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
+		namesListView.setItems(listToView);
+		namesListView.getSelectionModel().clearSelection();
+	}
+
+
+	public void onPracticeAction(ActionEvent actionEvent) {
+		if (isRandom) {
+			Collections.shuffle(listOfNamesSelected);
+		}
+
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/sample/practiceMenu.fxml"));
+			Parent root = fxmlLoader.load();
+			Stage stage = new Stage();
+			stage.setTitle("Practice selected names");
+			stage.setScene(new Scene(root, 600, 400));
+			stage.show();
+		} catch (IOException e){
+			// DO SOMETHING?????
+		}
+
+		closeCurrentStage(practiceButton);
+	}
+
+
+	public void handleListClicked(MouseEvent mouseEvent) {
+		System.out.println(fileSelected);
+	}
+
+
+	public static void closeCurrentStage(Button button) {
+		Stage currentStage = (Stage)button.getScene().getWindow();
+		currentStage.close();
+	}
+
+
+	public static List<String> getSelectedList(){
+		return listOfNamesSelected;
+	}
+
+
+	// Handle when randomise toggle button is clicked
+	public void toggleRandom() {
+		isRandom = randomBox.isSelected();
+	}
+
+
+	public void addToSelected() {
+		fileSelected = namesListView.getSelectionModel().getSelectedItem();
+
+		if (fileSelected != null) {
+			listOfNamesNotSelected.remove(fileSelected);
+			listOfNamesSelected.add(fileSelected);
+		}
+		updateListNotSelected();
+		updateListSelected();
+	}
+
+
+	public void removeFromSelected() {
+		fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
+
+		if (fileSelectedFromSelected != null) {
+			listOfNamesSelected.remove(fileSelectedFromSelected);
+			listOfNamesNotSelected.add(fileSelectedFromSelected);
+		}
+		updateListNotSelected();
+		updateListSelected();
+	}
+
+
+	public void updateListSelected() {
+		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesSelected);
+		selectedListView.setItems(listToView);
+		selectedListView.getSelectionModel().clearSelection();
+	}
+
+
+
 }
