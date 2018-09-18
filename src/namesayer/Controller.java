@@ -10,11 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -34,7 +30,7 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
 	private List<String> listOfNamesNotSelected;
-	private static List<String> listOfNamesSelected = new ArrayList<String>();
+	private static List<String> listOfNamesSelected;
 
 	private String fileSelected;
 	private String fileSelectedFromSelected;
@@ -73,6 +69,7 @@ public class Controller implements Initializable {
 		hackTooltipStartTiming(namesListTooltip);
 		namesListView.setTooltip(namesListTooltip);
 		selectedListView.setTooltip(selectedListTooltip);
+		listOfNamesSelected= new ArrayList<>();
 	}
 	
 	
@@ -117,22 +114,32 @@ public class Controller implements Initializable {
 
 
 	public void onPracticeAction(ActionEvent actionEvent) {
-		if (isRandom) {
-			Collections.shuffle(listOfNamesSelected);
-		}
 
-		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/practiceMenu.fxml"));
-			Parent root = fxmlLoader.load();
-			Stage stage = new Stage();
-			stage.setTitle("Practice selected names");
-			stage.setScene(new Scene(root, 600, 400));
-			stage.show();
-		} catch (IOException e){
-			// DO SOMETHING?????
-		}
+		if(listOfNamesSelected.isEmpty()){
+			Alert nonSelectedAlert = new Alert(Alert.AlertType.INFORMATION);
+			nonSelectedAlert.setTitle("ERROR");
+			nonSelectedAlert.setHeaderText(null);
+			nonSelectedAlert.setContentText("No name(s) have been selected. Please select at least one name to practice");
+			nonSelectedAlert.showAndWait();
+		} else {
 
-		closeCurrentStage(practiceButton);
+			if (isRandom) {
+				Collections.shuffle(listOfNamesSelected);
+			}
+
+			try {
+				FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/practiceMenu.fxml"));
+				Parent root = fxmlLoader.load();
+				Stage stage = new Stage();
+				stage.setTitle("Practice selected names");
+				stage.setScene(new Scene(root, 600, 400));
+				stage.show();
+			} catch (IOException e) {
+				// DO SOMETHING?????
+			}
+
+			closeCurrentStage(practiceButton);
+		}
 	}
 
 
@@ -204,6 +211,5 @@ public class Controller implements Initializable {
 		selectedListView.setItems(listToView);
 		selectedListView.getSelectionModel().clearSelection();
 	}
-
-
+	
 }
