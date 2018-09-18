@@ -26,7 +26,7 @@
             </Pane>
             <Pane maxHeight="300.0" maxWidth="200.0" minHeight="300.0" minWidth="200.0" prefHeight="300.0" prefWidth="200.0">
                <children>
-                  <ListView layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="300.0" minWidth="190.0" mouseTransparent="true" prefHeight="300.0" prefWidth="190.0" />
+                  <ListView fx:id = "displayList" layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="300.0" minWidth="190.0" prefHeight="300.0" prefWidth="190.0" />
                </children>
             </Pane>
             <Pane prefHeight="200.0" prefWidth="200.0">
@@ -51,9 +51,9 @@
       </VBox>
       <VBox maxHeight="400.0" maxWidth="400.0" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="400.0">
          <children>
-            <Pane prefHeight="50.0" prefWidth="400.0">
+            <Pane prefHeight="35.0" prefWidth="400.0">
                <children>
-                  <HBox alignment="CENTER_LEFT" maxHeight="50.0" maxWidth="400.0" minHeight="50.0" minWidth="400.0" prefHeight="50.0" prefWidth="400.0">
+                  <HBox alignment="CENTER_LEFT" maxHeight="30.0" maxWidth="400.0" minHeight="30.0" minWidth="400.0" prefHeight="30.0" prefWidth="400.0">
                      <children>
                         <Pane maxHeight="50.0" maxWidth="150.0" minHeight="50.0" minWidth="150.0" prefHeight="50.0" prefWidth="150.0">
                            <children>

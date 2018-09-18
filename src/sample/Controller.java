@@ -37,7 +37,7 @@ public class Controller implements Initializable {
     @FXML
     private CheckBox randomBox;
 
-    public List<String> selectedList = new ArrayList<>();
+    public static List<String> selectedList = new ArrayList<>();
 
     private boolean isRandom = randomBox.isSelected();
 
@@ -128,5 +128,10 @@ public class Controller implements Initializable {
     public static void closeCurrentStage(Button button) {
         Stage currentStage = (Stage) button.getScene().getWindow();
         currentStage.close();
+    }
+
+
+    public static List<String> getSelectedList(){
+        return selectedList;
     }
 }
