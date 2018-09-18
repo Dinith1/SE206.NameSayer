@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.File;
@@ -52,13 +53,18 @@ public class Controller implements Initializable {
 
 	@FXML
 	private ListView<String> archiveList;
-
+	
+	
+	private final Tooltip namesListTooltip = new Tooltip("Double-click to add to chosen names");
+	private final Tooltip selectedListTooltip = new Tooltip("Double-click to remove from chosen names");
 
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		initialiseListNotSelected();
 		updateListNotSelected();
+		namesListView.setTooltip(namesListTooltip);
+		selectedListView.setTooltip(selectedListTooltip);
 	}
 
 	
