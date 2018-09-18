@@ -25,12 +25,22 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    private List<String> listOfNames;
+    private List<String> listOfNamesNotSelected;
+    private List<String> listOfNamesSelected = new ArrayList<String>();
 
     private String fileSelected;
 
     @FXML
     private ListView<String> namesListView;
+    
+    @FXML
+    private ListView<String> selectedListView;
+    
+    @FXML
+    private Button addButton;
+    
+    @FXML
+    private Button removeButton;
 
     @FXML
     private Button practiceButton;
@@ -49,23 +59,24 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         namesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        updateList();
+        initialiseListNotSelected();
+        updateListNotSelected();
+    }
+    
+    // ********* WHAT HAPPENS WHEN YOU CLOSE THE PRACTICE MENU - SHOULD SELECTED LIST BE EMPTY - OR SHOULD IT STAY FILLED
+    // WITH WHAT WAS PREVIOUSLY SELECTED, AND THE UNSELECTED LIST UPDATED WITH THE EXTRA CREATED FILES??????????
+    public void initialiseListNotSelected() {
+        File nameFolder = new File(System.getProperty("user.dir"));
+        listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        //ArrayList<File> files = new ArrayList<File>(Arrays.asList(nameFolder.listFiles()));
     }
     
     
     // Called when program is launched to fill the ListView with files
-    public void updateList() {
-        ObservableList<String> listToView = FXCollections.observableArrayList(getListOfFiles());
+    public void updateListNotSelected() {
+        ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
         namesListView.setItems(listToView);
         namesListView.getSelectionModel().clearSelection();
-    }
-    
-    
-    public List<String> getListOfFiles() {
-        File nameFolder = new File(System.getProperty("user.dir"));
-        listOfNames = new ArrayList<String>(Arrays.asList(nameFolder.list()));
-        //ArrayList<File> files = new ArrayList<File>(Arrays.asList(nameFolder.listFiles()));
-        return listOfNames;
     }
     
     
@@ -91,10 +102,9 @@ public class Controller implements Initializable {
 
     public void handleListClicked(MouseEvent mouseEvent) {
         fileSelected = namesListView.getSelectionModel().getSelectedItem();
+        System.out.println(fileSelected);
 
-        if (fileSelected == null) {
-        	// Do nothing
-        } else {
+        if (fileSelected != null) {
             selectedList.add(fileSelected);
         }
     }
@@ -110,9 +120,34 @@ public class Controller implements Initializable {
         return selectedList;
     }
     
+    
     // Handle when randomise toggle button is clicked
     public void toggleRandom() {
     	isRandom = randomBox.isSelected();
+    }
+    
+    
+    public void addToSelected() {
+        fileSelected = namesListView.getSelectionModel().getSelectedItem();
+        
+        if (fileSelected != null) {
+        	listOfNamesNotSelected.remove(fileSelected);
+        	listOfNamesSelected.add(fileSelected);
+        }
+        updateListNotSelected();
+        updateListSelected();
+    }
+    
+    
+    public void updateListSelected() {
+    	ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesSelected);
+        selectedListView.setItems(listToView);
+        selectedListView.getSelectionModel().clearSelection();
+    }
+    
+    
+    public void removeFromSelected() {
+    	
     }
     
     
