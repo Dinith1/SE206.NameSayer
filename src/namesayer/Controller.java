@@ -57,7 +57,7 @@ public class Controller implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		namesListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+		namesListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		initialiseListNotSelected();
 		updateListNotSelected();
 	}
@@ -100,6 +100,7 @@ public class Controller implements Initializable {
 
 
 	public void handleListClicked(MouseEvent mouseEvent) {
+		fileSelected = namesListView.getSelectionModel().getSelectedItem();
 		System.out.println(fileSelected);
 	}
 
@@ -127,9 +128,9 @@ public class Controller implements Initializable {
 		if (fileSelected != null) {
 			listOfNamesNotSelected.remove(fileSelected);
 			listOfNamesSelected.add(fileSelected);
+			updateListNotSelected();
+			updateListSelected();
 		}
-		updateListNotSelected();
-		updateListSelected();
 	}
 
 
@@ -139,9 +140,9 @@ public class Controller implements Initializable {
 		if (fileSelectedFromSelected != null) {
 			listOfNamesSelected.remove(fileSelectedFromSelected);
 			listOfNamesNotSelected.add(fileSelectedFromSelected);
+			updateListNotSelected();
+			updateListSelected();
 		}
-		updateListNotSelected();
-		updateListSelected();
 	}
 
 
@@ -150,7 +151,6 @@ public class Controller implements Initializable {
 		selectedListView.setItems(listToView);
 		selectedListView.getSelectionModel().clearSelection();
 	}
-
 
 
 }

@@ -53,7 +53,7 @@
                             </Tab>
                           </tabs>
                         </TabPane>
-                        <Button mnemonicParsing="false" text="Add &gt;">
+                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addToSelected" text="Add &gt;">
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
@@ -66,8 +66,8 @@
                   <VBox alignment="TOP_CENTER" prefWidth="300.0">
                      <children>
                         <Label prefHeight="30.0" text="Names to practice" />
-                        <ListView prefHeight="330.0" prefWidth="300.0" />
-                        <Button mnemonicParsing="false" text="&lt; Remove" />
+                        <ListView fx:id="selectedListView" prefHeight="330.0" prefWidth="300.0" />
+                        <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeFromSelected" text="&lt; Remove" />
                      </children>
                   </VBox>
                </children>
