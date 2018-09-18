@@ -57,11 +57,11 @@ public class Controller implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		namesListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 		initialiseListNotSelected();
 		updateListNotSelected();
 	}
 
+	
 	// ********* WHAT HAPPENS WHEN YOU CLOSE THE PRACTICE MENU - SHOULD SELECTED LIST BE EMPTY - OR SHOULD IT STAY FILLED
 	// WITH WHAT WAS PREVIOUSLY SELECTED, AND THE UNSELECTED LIST UPDATED WITH THE EXTRA CREATED FILES??????????
 	public void initialiseListNotSelected() {
@@ -99,9 +99,17 @@ public class Controller implements Initializable {
 	}
 
 
-	public void handleListClicked(MouseEvent mouseEvent) {
+	public void handleUnselectedListClicked(MouseEvent mouseEvent) {
 		fileSelected = namesListView.getSelectionModel().getSelectedItem();
-		System.out.println(fileSelected);
+		System.out.println("LEFT LIST: " + fileSelected);
+		selectedListView.getSelectionModel().clearSelection();
+	}
+	
+	
+	public void handleSelectedListClicked(MouseEvent mouseEvent) {
+		fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
+		System.out.println("RIGHT LIST: " + fileSelectedFromSelected);
+		namesListView.getSelectionModel().clearSelection();
 	}
 
 

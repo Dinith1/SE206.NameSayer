@@ -37,7 +37,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <ListView fx:id="namesListView" onMouseClicked="#handleListClicked" prefHeight="330.0" prefWidth="300.0" />
+                                          <ListView fx:id="namesListView" onMouseClicked="#handleUnselectedListClicked" prefHeight="330.0" prefWidth="300.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
@@ -66,7 +66,7 @@
                   <VBox alignment="TOP_CENTER" prefWidth="300.0">
                      <children>
                         <Label prefHeight="30.0" text="Names to practice" />
-                        <ListView fx:id="selectedListView" prefHeight="330.0" prefWidth="300.0" />
+                        <ListView fx:id="selectedListView" onMouseClicked="#handleSelectedListClicked" prefHeight="330.0" prefWidth="300.0" />
                         <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeFromSelected" text="&lt; Remove" />
                      </children>
                   </VBox>
