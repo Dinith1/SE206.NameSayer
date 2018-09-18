@@ -37,6 +37,9 @@ public class Controller implements Initializable {
     @FXML
     private CheckBox randomBox;
 
+    @FXML
+    private ListView<String> archiveList;
+
     public static List<String> selectedList = new ArrayList<>();
 
     private boolean isRandom = randomBox.isSelected();
@@ -64,7 +67,7 @@ public class Controller implements Initializable {
     public List<String> getListOfFiles() {
         listOfNames = new ArrayList<>();
 
-        String checkNoFilesCommand = "find . -type f -name \"*.mp4\" | wc -l";
+        String checkNoFilesCommand = "find . -type f -name \"*.wav\" | wc -l";
         ProcessBuilder checkNoFilesPB = new ProcessBuilder("/bin/bash", "-c", checkNoFilesCommand);
 
 
@@ -75,30 +78,40 @@ public class Controller implements Initializable {
             BufferedReader fileCountBuffered = new BufferedReader(fileCountReader);
             String line = fileCountBuffered.readLine();
 
-            namesList.setMouseTransparent(false);
-            namesList.setFocusTraversable(true);
-            String command = "for f in *.mp4; do printf '%s\\n' \"${f%.mp4}\"; done;\n";
-            ProcessBuilder listPB = new ProcessBuilder("/bin/bash", "-c", command);
 
-            try {
-                Process listProcess = listPB.start();
+            if (line.equals("0")) {
+                listOfNames.add("No names in database");
+                namesList.setMouseTransparent(true);
+                namesList.setFocusTraversable(false);
+                return listOfNames;
+            } else {
+                namesList.setMouseTransparent(false);
+                namesList.setFocusTraversable(true);
+                String command = "for f in *.mp4; do printf '%s\\n' \"${f%.wav}\"; done;\n";
+                ProcessBuilder listPB = new ProcessBuilder("/bin/bash", "-c", command);
 
-                InputStream stdout = listProcess.getInputStream();
-                InputStreamReader inputReader = new InputStreamReader(stdout);
-                BufferedReader stdoutBuffered = new BufferedReader(inputReader);
 
-                String fileRead;
+                try {
+                    Process listProcess = listPB.start();
 
-                while ((fileRead = stdoutBuffered.readLine()) != null) {
-                    listOfNames.add(fileRead);
+                    InputStream stdout = listProcess.getInputStream();
+                    InputStreamReader inputReader = new InputStreamReader(stdout);
+                    BufferedReader stdoutBuffered = new BufferedReader(inputReader);
 
+                    String fileRead;
+
+                    while ((fileRead = stdoutBuffered.readLine()) != null) {
+                        listOfNames.add(fileRead);
+
+                    }
+                } catch (IOException e) {
                 }
-            } catch (IOException e) {
             }
 
 
         } catch (IOException e) {
         }
+
 
         return listOfNames;
     }
@@ -113,6 +126,7 @@ public class Controller implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         namesList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        updateList();
     }
 
     public void handleListClicked(MouseEvent mouseEvent) {

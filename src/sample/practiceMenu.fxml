@@ -75,7 +75,7 @@
             </Pane>
             <Pane maxHeight="120.0" maxWidth="400.0" minHeight="120.0" minWidth="400.0" prefHeight="120.0" prefWidth="400.0">
                <children>
-                  <ListView fx:id="archiveList" onMouseClicked="#handleArcListClicked" prefHeight="70.0" prefWidth="395.0" />
+                  <ListView fx:id="availableList" onMouseClicked="#handleArcListClicked" prefHeight="70.0" prefWidth="395.0" />
                   <GridPane alignment="CENTER" layoutX="125.0" layoutY="77.0" prefWidth="150.0">
                      <children>
                         <Button fx:id="playArcButton" mnemonicParsing="false" onAction="#handlePlayArc" prefHeight="30.0" prefWidth="70.0" text="Play" />
@@ -105,7 +105,7 @@
                   <ProgressBar fx:id="recordingIndicator" layoutX="75.0" layoutY="14.0" prefHeight="25.0" prefWidth="250.0" progress="0.0" />
                   <Button fx:id="recordButton" layoutX="160.0" layoutY="46.0" mnemonicParsing="false" onAction="#handleRecordAction" prefHeight="30.0" prefWidth="80.0" text="Record" textAlignment="CENTER" underline="true" />
                   <Button fx:id="playRecButton" layoutX="75.0" layoutY="100.0" mnemonicParsing="false" onAction="#handlePlayRec" prefHeight="30.0" prefWidth="60.0" text="Play" />
-                  <Button fx:id="saveRecButton" layoutX="263.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleSaveRec" prefHeight="30.0" prefWidth="60.0" text="Save" />
+                  <Button fx:id="deleteRecButton" layoutX="263.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleDeleteRec" prefHeight="30.0" prefWidth="60.0" text="Save" />
                   <Button fx:id="micTestButton" layoutX="263.0" layoutY="49.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#handleMicTest" prefHeight="25.0" prefWidth="25.0" />
                </children>
             </Pane>
