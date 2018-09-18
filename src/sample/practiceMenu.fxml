@@ -26,7 +26,7 @@
             </Pane>
             <Pane maxHeight="300.0" maxWidth="200.0" minHeight="300.0" minWidth="200.0" prefHeight="300.0" prefWidth="200.0">
                <children>
-                  <ListView fx:id = "displayList" layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="300.0" minWidth="190.0" prefHeight="300.0" prefWidth="190.0" />
+                  <ListView fx:id="displayList" layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="300.0" minWidth="190.0" prefHeight="300.0" prefWidth="190.0" />
                </children>
             </Pane>
             <Pane prefHeight="200.0" prefWidth="200.0">
@@ -104,8 +104,6 @@
                <children>
                   <ProgressBar fx:id="recordingIndicator" layoutX="75.0" layoutY="14.0" prefHeight="25.0" prefWidth="250.0" progress="0.0" />
                   <Button fx:id="recordButton" layoutX="160.0" layoutY="46.0" mnemonicParsing="false" onAction="#handleRecordAction" prefHeight="30.0" prefWidth="80.0" text="Record" textAlignment="CENTER" underline="true" />
-                  <Button fx:id="playRecButton" layoutX="75.0" layoutY="100.0" mnemonicParsing="false" onAction="#handlePlayRec" prefHeight="30.0" prefWidth="60.0" text="Play" />
-                  <Button fx:id="deleteRecButton" layoutX="263.0" layoutY="100.0" mnemonicParsing="false" onAction="#handleDeleteRec" prefHeight="30.0" prefWidth="60.0" text="Save" />
                   <Button fx:id="micTestButton" layoutX="263.0" layoutY="49.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#handleMicTest" prefHeight="25.0" prefWidth="25.0" />
                </children>
             </Pane>
