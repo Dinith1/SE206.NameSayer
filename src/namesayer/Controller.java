@@ -1,5 +1,7 @@
 package namesayer;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,14 +17,19 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+
+
 
 public class Controller implements Initializable {
 
@@ -63,8 +70,32 @@ public class Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		initialiseListNotSelected();
 		updateListNotSelected();
+		hackTooltipStartTiming(namesListTooltip);
 		namesListView.setTooltip(namesListTooltip);
 		selectedListView.setTooltip(selectedListTooltip);
+	}
+	
+	
+	public static void hackTooltipStartTiming(Tooltip tooltip) {
+	    try {
+	        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
+	        fieldBehavior.setAccessible(true);
+	        Object objBehavior = fieldBehavior.get(tooltip);
+
+	        Field actTimer = objBehavior.getClass().getDeclaredField("activationTimer");
+	        Field hideTimer = objBehavior.getClass().getDeclaredField("hideTimer");
+	        actTimer.setAccessible(true);
+	        hideTimer.setAccessible(true);
+	        Timeline objActTimer = (Timeline) actTimer.get(objBehavior);
+	        Timeline objHideTimer = (Timeline) actTimer.get(objBehavior);
+
+	        objActTimer.getKeyFrames().clear();
+	        objActTimer.getKeyFrames().add(new KeyFrame(new Duration(200)));
+	        objHideTimer.getKeyFrames().clear();
+	        objHideTimer.getKeyFrames().add(new KeyFrame(new Duration(200)));
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 
 	
