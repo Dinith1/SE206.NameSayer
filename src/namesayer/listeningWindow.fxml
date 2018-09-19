@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox fx:controller="namesayer.practiceController" maxHeight="100.0" maxWidth="200.0" minHeight="100.0" minWidth="200.0" prefHeight="100.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Label layoutX="45.0" layoutY="38.0" text="Listening...">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+   </children>
+</VBox>

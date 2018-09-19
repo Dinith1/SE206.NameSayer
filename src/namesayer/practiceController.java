@@ -8,7 +8,10 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
@@ -36,6 +39,7 @@ public class practiceController implements Initializable {
 
     private boolean contains;
 
+    private Stage listeningStage;
     @FXML
     private Button prevButton;
 
@@ -85,9 +89,11 @@ public class practiceController implements Initializable {
     }
 
     public void handlePlayButton(ActionEvent actionEvent) {
+        showListeningStage();
         playButton.setDisable(true);
         prevButton.setDisable(true);
         nextButton.setDisable(true);
+
 
         Service<Void> background = new Service<Void>() {
             @Override
@@ -113,6 +119,7 @@ public class practiceController implements Initializable {
                 playButton.setDisable(false);
                 prevButton.setDisable(false);
                 nextButton.setDisable(false);
+                listeningStage.close();
             }
         });
     }
@@ -159,6 +166,7 @@ public class practiceController implements Initializable {
         if (selectedArchive == null) {
             noFileAlert();
         } else {
+            showListeningStage();
             playArcButton.setDisable(true);
             deleteArcButton.setDisable(true);
             Service<Void> background = new Service<Void>() {
@@ -184,6 +192,7 @@ public class practiceController implements Initializable {
                 public void handle(WorkerStateEvent event) {
                     playArcButton.setDisable(false);
                     deleteArcButton.setDisable(false);
+                    listeningStage.close();
                 }
             });
         }
@@ -260,6 +269,18 @@ public class practiceController implements Initializable {
     public void handleExitMic(ActionEvent actionEvent) {
         Stage currentStage = (Stage) exitMicButton.getScene().getWindow();
         currentStage.close();
+    }
+
+    public void showListeningStage(){
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
+            Parent root = fxmlLoader.load();
+            listeningStage = new Stage();
+            listeningStage.setTitle("Please wait");
+            listeningStage.setScene(new Scene(root, 200, 100));
+            listeningStage.show();
+        } catch (IOException e){
+        }
     }
 
 }
