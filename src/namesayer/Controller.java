@@ -13,7 +13,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -70,13 +69,13 @@ public class Controller implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		initialiseListNotSelected();
 		updateListNotSelected();
-		hackTooltipStartTiming(namesListTooltip);
+		makeTooltipAppearFaster(namesListTooltip);
 		namesListView.setTooltip(namesListTooltip);
 		selectedListView.setTooltip(selectedListTooltip);
 	}
 	
 	
-	public static void hackTooltipStartTiming(Tooltip tooltip) {
+	public static void makeTooltipAppearFaster(Tooltip tooltip) {
 	    try {
 	        Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
 	        fieldBehavior.setAccessible(true);

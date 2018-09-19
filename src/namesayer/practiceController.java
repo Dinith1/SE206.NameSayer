@@ -15,11 +15,18 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ResourceBundle;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
 
 
 public class practiceController implements Initializable {
@@ -239,6 +246,40 @@ public class practiceController implements Initializable {
         selectedIndex = 0;
 
         selectedName = displayList.getSelectionModel().getSelectedItem();
+        
+        
+//        System.out.println("testing hello");
+//        
+//        TargetDataLine line;
+//        AudioFormat format = new AudioFormat(5, 10, 10, false, false);
+//        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+//        if (!AudioSystem.isLineSupported(info)) {
+//        	System.out.println("LINE NOT SUPPORTED");
+//        }
+//        try {
+//        	System.out.println("A");
+//        	line = (TargetDataLine)AudioSystem.getLine(info);
+//        	System.out.println("B");
+//        	line.open(format); 
+//        	System.out.println("C");
+//        } catch (Exception e)  {
+//        	System.out.println("D");
+//        	line = null;
+//        	e.printStackTrace();
+//        }
+//        
+//        ByteArrayOutputStream out = new ByteArrayOutputStream();
+//        int numBytesRead;
+//        byte[] data = new byte[line.getBufferSize() / 5];
+//        
+//        line.start();
+//        
+//        while (true) {
+//        	numBytesRead = line.read(data, 0, data.length);
+//        	out.write(data, 0, numBytesRead);
+//        	System.out.println(numBytesRead);
+//        }
+        
 
     }
 
