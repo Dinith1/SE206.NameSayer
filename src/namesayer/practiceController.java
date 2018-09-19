@@ -261,4 +261,5 @@ public class practiceController implements Initializable {
         Stage currentStage = (Stage) exitMicButton.getScene().getWindow();
         currentStage.close();
     }
+
 }
