@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.sound.sampled.AudioFormat;
@@ -44,6 +45,8 @@ public class practiceController implements Initializable {
 	private String selectedArchive;
 
 	private boolean contains;
+
+	private String toPlay;
 
 	@FXML
 	private Button prevButton;
@@ -69,10 +72,10 @@ public class practiceController implements Initializable {
 	private Button micTestButton;
 
 	@FXML
-	private ListView<String> availableList;
+	private ListView<String> availableListView;
 
 	@FXML
-	private ListView<String> displayList;
+	private ListView<String> displayListView;
 
 	@FXML
 	private ProgressBar recordingIndicator;
@@ -87,20 +90,26 @@ public class practiceController implements Initializable {
 
     private List<NameFile> nameDatabase;
 
+    private File creations = new File("./Creations");
+
+    private NameFile currentName;
+
     
     
     
 
 	public void handlePrevButton(ActionEvent actionEvent) {
 		if (selectedIndex == 0) {
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().selectFirst();
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().selectFirst();
 		} else {
 			selectedIndex--;
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().select(selectedIndex);
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().select(selectedIndex);
 		}
-		selectedName = displayList.getSelectionModel().getSelectedItem();
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		getCurrentName();
+		updateArchive();
 
 	}
 
@@ -108,15 +117,17 @@ public class practiceController implements Initializable {
 
 	public void handleNextButton(ActionEvent actionEvent) {
 		if (selectedIndex == listToPlay.size() - 1) {
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().selectLast();
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().selectLast();
 
 		} else {
 			selectedIndex++;
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().select(selectedIndex);
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().select(selectedIndex);
 		}
-		selectedName = displayList.getSelectionModel().getSelectedItem();
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		getCurrentName();
+		updateArchive();
 
 	}
 
@@ -126,7 +137,7 @@ public class practiceController implements Initializable {
 
 	public void handleArcListClicked(MouseEvent mouseEvent) {
 
-		selectedArchive = availableList.getSelectionModel().getSelectedItem();
+		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
 	}
 
 
@@ -151,13 +162,13 @@ public class practiceController implements Initializable {
 					}
 
 					updateArchive();
-					availableList.getSelectionModel().clearSelection();
+					availableListView.getSelectionModel().clearSelection();
 
 				}
 			} else {
 				if (!contains) {
-					availableList.setMouseTransparent(true);
-					availableList.setFocusTraversable(false);
+					availableListView.setMouseTransparent(true);
+					availableListView.setFocusTraversable(false);
 				}
 			}
 		}
@@ -165,14 +176,16 @@ public class practiceController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		nameDatabase = Controller.getAddedNames();
 		listToPlay = FXCollections.observableArrayList(Controller.getSelectedList());
-		displayList.setItems(listToPlay);
-		displayList.getSelectionModel().clearSelection();
-		displayList.getSelectionModel().selectFirst();
+		displayListView.setItems(listToPlay);
+		displayListView.getSelectionModel().clearSelection();
+		displayListView.getSelectionModel().selectFirst();
 		selectedIndex = 0;
 
-		selectedName = displayList.getSelectionModel().getSelectedItem();
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		getCurrentName();
+		updateArchive();
 
 
 		// Microphone level
@@ -198,7 +211,7 @@ public class practiceController implements Initializable {
 				while(true) {
 					byte[] bytes = new byte[line.getBufferSize() / 5];
 					line.read(bytes, 0, bytes.length);
-					System.out.println("RMS Level: " + calculateRMSLevel(bytes));
+//					System.out.println("RMS Level: " + calculateRMSLevel(bytes));
 					double prog = (double)calculateRMSLevel(bytes) / 70;
 					micBar.setProgress(prog);
 				}
@@ -227,7 +240,9 @@ public class practiceController implements Initializable {
 
 	// Update attempts list
 	public void updateArchive() {
-
+		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
+		availableListView.setItems(recordedList);
+		availableListView.getSelectionModel().clearSelection();
 	}
 
 	
@@ -244,38 +259,41 @@ public class practiceController implements Initializable {
 
 
     public void handlePlayButton(ActionEvent actionEvent) {
-        showListeningStage();
-        playButton.setDisable(true);
-        prevButton.setDisable(true);
-        nextButton.setDisable(true);
+//        showListeningStage();
+//        playButton.setDisable(true);
+//        prevButton.setDisable(true);
+//        nextButton.setDisable(true);
 
-        Service<Void> background = new Service<Void>() {
-            @Override
-            protected Task<Void> createTask() {
-                return new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        File recording = new File("Names/" + selectedName + ".wav");
-                        String path = recording.toString();
-                        Media media = new Media(new File(path).toURI().toString());
-                        MediaPlayer audioPlayer = new MediaPlayer(media);
-                        audioPlayer.play();
-                        return null;
-                    }
-                };
-            }
-        };
+        toPlay = currentName.getFileName();
+		System.out.println(toPlay);
 
-        background.start();
-        background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                playButton.setDisable(false);
-                prevButton.setDisable(false);
-                nextButton.setDisable(false);
-                listeningStage.close();
-            }
-        });
+//        Service<Void> background = new Service<Void>() {
+//            @Override
+//            protected Task<Void> createTask() {
+//                return new Task<Void>() {
+//                    @Override
+//                    protected Void call() throws Exception {
+//                        File recording = new File("names/" + toPlay);
+//                        String path = recording.toString();
+//                        Media media = new Media(new File(path).toURI().toString());
+//                        MediaPlayer audioPlayer = new MediaPlayer(media);
+//                        audioPlayer.play();
+//                        return null;
+//                    }
+//                };
+//            }
+//        };
+//
+//        background.start();
+//        background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//            @Override
+//            public void handle(WorkerStateEvent event) {
+//                playButton.setDisable(false);
+//                prevButton.setDisable(false);
+//                nextButton.setDisable(false);
+//                listeningStage.close();
+//            }
+//        });
     }
 
 
@@ -283,16 +301,16 @@ public class practiceController implements Initializable {
     public void handleRecordAction(ActionEvent actionEvent) {
         int attempt = 1;
 
-        File nameRecording = new File("/Attempts/" + selectedName + attempt);
+        File nameRecording = new File("./Creations/" + selectedName +"_attempt"+ attempt);
         while (nameRecording.exists()) {
             attempt++;
-            nameRecording = new File("/Attempts/" + selectedName + attempt);
+            nameRecording = new File("./Creations/" + selectedName + "_attempt"+ attempt);
         }
 
-
-        String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + selectedName + "\"attempt_" + attempt + ".wav";
+		String recordingName = selectedName+"_attempt"+attempt;
+        String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
         ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
-
+		recordAudio.directory(creations);
         try {
             recordAudio.start();
 
@@ -302,6 +320,8 @@ public class practiceController implements Initializable {
             }
         } catch (IOException e) {
         }
+
+        currentName.addAttempt(recordingName+".wav");
     }
 
     public void handlePlayArc(ActionEvent actionEvent) {
@@ -362,4 +382,11 @@ public class practiceController implements Initializable {
         }
     }
 
+    public void getCurrentName(){
+		for (NameFile n : nameDatabase){
+			if (n.getListName().equals(selectedName)){
+				currentName = n;
+			}
+		}
+	}
 }

@@ -122,11 +122,11 @@ public class Controller implements Initializable {
         System.out.println(nameFolder);
         listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
         for (int i = 0; i < listOfNamesInDatabase.size(); i++) {
-            int attempt = 1;
+            int attempt = 0;
             String currentFile = listOfNamesInDatabase.get(i);
             System.out.println(currentFile);
             int startIndex = currentFile.lastIndexOf("_") + 1;
-            int endIndex = (currentFile.lastIndexOf(".") == 0) ? 0 : currentFile.lastIndexOf(".")-1;
+            int endIndex = currentFile.lastIndexOf(".");
             System.out.println(startIndex + "....." + endIndex);
 
             String listName = currentFile.substring(startIndex, endIndex);
@@ -134,10 +134,12 @@ public class Controller implements Initializable {
                 attempt++;
                 listName = listName + "_" + attempt;
             }
-            NameFile name = new NameFile(currentFile, listName, false);
+            listOfNamesNotSelected.add(listName);
+            NameFile name = new NameFile(currentFile, listName, "bad");
             namesListArray.add(name);
-
         }
+        System.out.println(listOfNamesNotSelected);
+        Collections.sort(listOfNamesNotSelected);
 
     }
 
@@ -236,6 +238,8 @@ public class Controller implements Initializable {
         if (fileSelected != null) {
             listOfNamesNotSelected.remove(fileSelected);
             listOfNamesSelected.add(fileSelected);
+            Collections.sort(listOfNamesNotSelected);
+            Collections.sort(listOfNamesSelected);
             updateListNotSelected();
             updateListSelected();
         }
@@ -248,6 +252,8 @@ public class Controller implements Initializable {
         if (fileSelectedFromSelected != null) {
             listOfNamesSelected.remove(fileSelectedFromSelected);
             listOfNamesNotSelected.add(fileSelectedFromSelected);
+            Collections.sort(listOfNamesNotSelected);
+            Collections.sort(listOfNamesSelected);
             updateListNotSelected();
             updateListSelected();
         }
