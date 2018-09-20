@@ -86,6 +86,9 @@ public class practiceController implements Initializable {
 	@FXML
 	private ProgressBar micBar = new ProgressBar();
 
+	@FXML
+	private Label playingLabel;
+
 	private Service<Void> bgThread;
 
     private List<NameFile> nameDatabase;
@@ -94,85 +97,7 @@ public class practiceController implements Initializable {
 
     private NameFile currentName;
 
-    
-    
-    
 
-	public void handlePrevButton(ActionEvent actionEvent) {
-		if (selectedIndex == 0) {
-			displayListView.scrollTo(selectedIndex);
-			displayListView.getSelectionModel().selectFirst();
-		} else {
-			selectedIndex--;
-			displayListView.scrollTo(selectedIndex);
-			displayListView.getSelectionModel().select(selectedIndex);
-		}
-		selectedName = displayListView.getSelectionModel().getSelectedItem();
-		getCurrentName();
-		updateArchive();
-
-	}
-
-
-
-	public void handleNextButton(ActionEvent actionEvent) {
-		if (selectedIndex == listToPlay.size() - 1) {
-			displayListView.scrollTo(selectedIndex);
-			displayListView.getSelectionModel().selectLast();
-
-		} else {
-			selectedIndex++;
-			displayListView.scrollTo(selectedIndex);
-			displayListView.getSelectionModel().select(selectedIndex);
-		}
-		selectedName = displayListView.getSelectionModel().getSelectedItem();
-		getCurrentName();
-		updateArchive();
-
-	}
-
-
-
-
-
-	public void handleArcListClicked(MouseEvent mouseEvent) {
-
-		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
-	}
-
-
-	public void handleDeleteArc(ActionEvent actionEvent) {
-
-		if (selectedArchive == null) {
-			noFileAlert();
-		} else {
-
-			File file = new File("Names/" + selectedArchive + ".mp4");
-			if (file.exists()) {
-
-				Alert deleteConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete:" + selectedArchive + "?", ButtonType.YES, ButtonType.NO);
-				deleteConfirm.showAndWait();
-				if (deleteConfirm.getResult() == ButtonType.YES) {
-
-					File toDelete = new File("Names/" + selectedArchive + ".mp4");
-					try {
-						Files.deleteIfExists(toDelete.toPath());
-					} catch (IOException e) {
-
-					}
-
-					updateArchive();
-					availableListView.getSelectionModel().clearSelection();
-
-				}
-			} else {
-				if (!contains) {
-					availableListView.setMouseTransparent(true);
-					availableListView.setFocusTraversable(false);
-				}
-			}
-		}
-	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -184,6 +109,7 @@ public class practiceController implements Initializable {
 		selectedIndex = 0;
 
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		playingLabel.setText(selectedName);
 		getCurrentName();
 		updateArchive();
 
@@ -219,52 +145,52 @@ public class practiceController implements Initializable {
 		}.start();
 
 	}
+    
 
-	// https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
-	protected static int calculateRMSLevel(byte[] audioData) {
-		// audioData might be buffered data read from a data line
-		long lSum = 0;
-		for(int i = 0; i<audioData.length; i++)
-			lSum = lSum + audioData[i];
+	public void handlePrevButton(ActionEvent actionEvent) {
+		if (selectedIndex == 0) {
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().selectFirst();
+		} else {
+			selectedIndex--;
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().select(selectedIndex);
+		}
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		playingLabel.setText(selectedName);
+		getCurrentName();
+		updateArchive();
 
-		double dAvg = lSum / audioData.length;
-
-		double sumMeanSquare = 0d;
-		for(int j=0; j<audioData.length; j++)
-			sumMeanSquare = sumMeanSquare + Math.pow(audioData[j] - dAvg, 2d);
-
-		double averageMeanSquare = sumMeanSquare / audioData.length;
-		return (int)(Math.pow(averageMeanSquare,0.5d) + 0.5);
 	}
 
 
-	// Update attempts list
-	public void updateArchive() {
-		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
-		availableListView.setItems(recordedList);
-		availableListView.getSelectionModel().clearSelection();
+
+	public void handleNextButton(ActionEvent actionEvent) {
+		if (selectedIndex == listToPlay.size() - 1) {
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().selectLast();
+
+		} else {
+			selectedIndex++;
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().select(selectedIndex);
+		}
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		playingLabel.setText(selectedName);
+		getCurrentName();
+		updateArchive();
+
+
 	}
 
-	
-	public void handleMicTest(ActionEvent actionEvent) {
-		
-	}
 
-
-	//Exits test mic window
-	public void handleExitMic(ActionEvent actionEvent) {
-		Stage currentStage = (Stage) exitMicButton.getScene().getWindow();
-		currentStage.close();
-	}
-
-
-    public void handlePlayButton(ActionEvent actionEvent) {
+	public void handlePlayButton(ActionEvent actionEvent) {
 //        showListeningStage();
 //        playButton.setDisable(true);
 //        prevButton.setDisable(true);
 //        nextButton.setDisable(true);
 
-        toPlay = currentName.getFileName();
+		toPlay = currentName.getFileName();
 		System.out.println(toPlay);
 
 //        Service<Void> background = new Service<Void>() {
@@ -294,12 +220,105 @@ public class practiceController implements Initializable {
 //                listeningStage.close();
 //            }
 //        });
-    }
+	}
 
 
+
+	public void handleArcListClicked(MouseEvent mouseEvent) {
+
+		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
+	}
+
+
+	public void handleDeleteArc(ActionEvent actionEvent) {
+
+		if (selectedArchive == null) {
+			noFileAlert();
+		} else {
+
+			String fileString = "Creations/"+selectedArchive;
+			File toDelete = new File(fileString +".wav");
+			if (toDelete.exists()) {
+
+				Alert deleteConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete:" + selectedArchive + "?", ButtonType.YES, ButtonType.NO);
+				deleteConfirm.showAndWait();
+				if (deleteConfirm.getResult() == ButtonType.YES) {
+
+					try {
+						Files.deleteIfExists(toDelete.toPath());
+					} catch (IOException e) {
+					}
+
+					currentName.deleteAttempt(fileString);
+					updateArchive();
+					availableListView.getSelectionModel().clearSelection();
+
+				}
+			} else {
+				if (!contains) {
+					availableListView.setMouseTransparent(true);
+					availableListView.setFocusTraversable(false);
+				}
+			}
+		}
+	}
+
+	public void handlePlayArc(ActionEvent actionEvent) {
+		if (selectedArchive == null) {
+			noFileAlert();
+		} else {
+			showListeningStage();
+			playArcButton.setDisable(true);
+			deleteArcButton.setDisable(true);
+			Service<Void> background = new Service<Void>() {
+				@Override
+				protected Task<Void> createTask() {
+					return new Task<Void>() {
+						@Override
+						protected Void call() throws Exception {
+							File recording = new File("Names/" + selectedArchive + ".wav");
+							String path = recording.toString();
+							Media media = new Media(new File(path).toURI().toString());
+							MediaPlayer audioPlayer = new MediaPlayer(media);
+							audioPlayer.play();
+							return null;
+						}
+					};
+				}
+			};
+
+			background.start();
+			background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+				@Override
+				public void handle(WorkerStateEvent event) {
+					playArcButton.setDisable(false);
+					deleteArcButton.setDisable(false);
+					listeningStage.close();
+				}
+			});
+		}
+	}
+
+
+	// Update attempts list
+	public void updateArchive() {
+		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
+		if(recordedList.size() == 0){
+			contains = false;
+			availableListView.setMouseTransparent(true);
+			availableListView.setFocusTraversable(false);
+
+		} else {
+			contains = true;
+			availableListView.setMouseTransparent(false);
+			availableListView.setFocusTraversable(true);
+		}
+		availableListView.setItems(recordedList);
+		availableListView.getSelectionModel().clearSelection();
+	}
 
     public void handleRecordAction(ActionEvent actionEvent) {
-        int attempt = 1;
+        int attempt = 0;
 
         File nameRecording = new File("./Creations/" + selectedName +"_attempt"+ attempt);
         while (nameRecording.exists()) {
@@ -321,43 +340,8 @@ public class practiceController implements Initializable {
         } catch (IOException e) {
         }
 
-        currentName.addAttempt(recordingName+".wav");
-    }
-
-    public void handlePlayArc(ActionEvent actionEvent) {
-        if (selectedArchive == null) {
-            noFileAlert();
-        } else {
-            showListeningStage();
-            playArcButton.setDisable(true);
-            deleteArcButton.setDisable(true);
-            Service<Void> background = new Service<Void>() {
-                @Override
-                protected Task<Void> createTask() {
-                    return new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            File recording = new File("Names/" + selectedArchive + ".wav");
-                            String path = recording.toString();
-                            Media media = new Media(new File(path).toURI().toString());
-                            MediaPlayer audioPlayer = new MediaPlayer(media);
-                            audioPlayer.play();
-                            return null;
-                        }
-                    };
-                }
-            };
-
-            background.start();
-            background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    playArcButton.setDisable(false);
-                    deleteArcButton.setDisable(false);
-                    listeningStage.close();
-                }
-            });
-        }
+        currentName.addAttempt(recordingName);
+        updateArchive();
     }
 
  
@@ -369,6 +353,22 @@ public class practiceController implements Initializable {
         alert.showAndWait();
     }
 
+	// https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
+	protected static int calculateRMSLevel(byte[] audioData) {
+		// audioData might be buffered data read from a data line
+		long lSum = 0;
+		for(int i = 0; i<audioData.length; i++)
+			lSum = lSum + audioData[i];
+
+		double dAvg = lSum / audioData.length;
+
+		double sumMeanSquare = 0d;
+		for(int j=0; j<audioData.length; j++)
+			sumMeanSquare = sumMeanSquare + Math.pow(audioData[j] - dAvg, 2d);
+
+		double averageMeanSquare = sumMeanSquare / audioData.length;
+		return (int)(Math.pow(averageMeanSquare,0.5d) + 0.5);
+	}
 
     public void showListeningStage() {
         try {

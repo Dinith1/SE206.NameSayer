@@ -184,7 +184,8 @@ public class Controller implements Initializable {
                 stage.setScene(new Scene(root, 600, 400));
                 stage.show();
             } catch (IOException e) {
-                // DO SOMETHING?????
+                e.printStackTrace();
+                System.out.println("shit happened");
             }
 
             closeCurrentStage(practiceButton);
@@ -222,6 +223,7 @@ public class Controller implements Initializable {
 
     //Getter method for the list of selected names
     public static List<String> getSelectedList() {
+        System.out.println(listOfNamesSelected);
         return listOfNamesSelected;
     }
 

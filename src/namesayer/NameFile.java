@@ -2,6 +2,7 @@ package namesayer;
 
 import javafx.beans.property.SimpleStringProperty;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class NameFile {
     private SimpleStringProperty _fileName;
     private SimpleStringProperty _listName;
     private SimpleStringProperty _rating;
-    private List<String> attemptList;
+    private List<String> attemptList = new ArrayList<>();
 
     public NameFile(String fileName, String listName, String rating) {
         _fileName= new SimpleStringProperty(fileName);
@@ -39,8 +40,14 @@ public class NameFile {
     }
 
     public List<String> getAttemptList(){
-        Collections.sort(attemptList);
+        if(!attemptList.isEmpty()) {
+            Collections.sort(attemptList);
+        }
         return attemptList;
+    }
+
+    public void deleteAttempt(String attemptFileName){
+        attemptList.remove(attemptFileName);
     }
 
 }
