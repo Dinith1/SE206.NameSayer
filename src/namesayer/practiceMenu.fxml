@@ -75,7 +75,7 @@
                         <Insets top="5.0" />
                      </HBox.margin>
                   </ImageView>
-                  <ProgressBar prefHeight="28.0" prefWidth="350.0" progress="0.0">
+                  <ProgressBar fx:id="micBar" prefHeight="28.0" prefWidth="350.0" progress="0.0">
                      <padding>
                         <Insets left="20.0" right="5.0" top="10.0" />
                      </padding>
