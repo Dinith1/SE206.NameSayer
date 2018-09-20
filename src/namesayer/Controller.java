@@ -14,7 +14,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -33,15 +36,16 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
     private List<String> listOfNamesNotSelected;
+    private List<String> listOfNamesInDatabase;
     private static List<String> listOfNamesSelected;
     private List<String> listOfArchive;
+    private static List<NameFile> namesListArray;
 
     private String fileSelected;
     private String fileSelectedFromSelected;
 
     @FXML
-    private ListView<String> namesListView;
-
+    private TableView<String> namesTableView;
     @FXML
     private ListView<String> selectedListView;
 
@@ -61,6 +65,12 @@ public class Controller implements Initializable {
     @FXML
     private ListView<String> archiveListView = new ListView<String>();
 
+    @FXML
+    private TableColumn<NameFile, String> nameColumn;
+
+    @FXML
+    private TableColumn<NameFile, String> ratingColumn;
+
 
     private final Tooltip namesListTooltip = new Tooltip("Double-click to add to chosen names");
     private final Tooltip selectedListTooltip = new Tooltip("Double-click to remove from chosen names");
@@ -68,13 +78,16 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        listOfNamesSelected = new ArrayList<>();
         initialiseListNotSelected();
         updateListNotSelected();
         initialiseArchive();
         hackTooltipStartTiming(namesListTooltip);
-        namesListView.setTooltip(namesListTooltip);
+        namesTableView.setTooltip(namesListTooltip);
         selectedListView.setTooltip(selectedListTooltip);
-        listOfNamesSelected = new ArrayList<>();
+        nameColumn.setCellValueFactory( new PropertyValueFactory<NameFile, String>("_listName"));
+        ratingColumn.setCellValueFactory( new PropertyValueFactory<NameFile, String>("_rating"));
+
     }
 
 
@@ -103,9 +116,29 @@ public class Controller implements Initializable {
 
     //Initialises the database list
     public void initialiseListNotSelected() {
-        File nameFolder = new File(System.getProperty("user.dir"));
-        listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
-        //ArrayList<File> files = new ArrayList<File>(Arrays.asList(nameFolder.listFiles()));
+        listOfNamesNotSelected = new ArrayList<>();
+        namesListArray = new ArrayList<>();
+        File nameFolder = new File("names");
+        System.out.println(nameFolder);
+        listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        for (int i = 0; i < listOfNamesInDatabase.size(); i++) {
+            int attempt = 1;
+            String currentFile = listOfNamesInDatabase.get(i);
+            System.out.println(currentFile);
+            int startIndex = currentFile.lastIndexOf("_") + 1;
+            int endIndex = (currentFile.lastIndexOf(".") == 0) ? 0 : currentFile.lastIndexOf(".")-1;
+            System.out.println(startIndex + "....." + endIndex);
+
+            String listName = currentFile.substring(startIndex, endIndex);
+            while (listOfNamesNotSelected.contains(listName)) {
+                attempt++;
+                listName = listName + "_" + attempt;
+            }
+            NameFile name = new NameFile(currentFile, listName, false);
+            namesListArray.add(name);
+
+        }
+
     }
 
     //Initialises the archive list and adds to listview
@@ -121,8 +154,8 @@ public class Controller implements Initializable {
     // Called when program is launched to fill the ListView with files
     public void updateListNotSelected() {
         ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
-        namesListView.setItems(listToView);
-        namesListView.getSelectionModel().clearSelection();
+        namesTableView.setItems(listToView);
+        namesTableView.getSelectionModel().clearSelection();
     }
 
 
@@ -159,7 +192,7 @@ public class Controller implements Initializable {
 
     //Handles what to do when a name from the database is clicked
     public void handleUnselectedListClicked(MouseEvent mouseEvent) {
-        fileSelected = namesListView.getSelectionModel().getSelectedItem();
+        fileSelected = namesTableView.getSelectionModel().getSelectedItem();
         System.out.println("LEFT LIST: " + fileSelected);
         selectedListView.getSelectionModel().clearSelection();
 
@@ -172,7 +205,7 @@ public class Controller implements Initializable {
     public void handleSelectedListClicked(MouseEvent mouseEvent) {
         fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
         System.out.println("RIGHT LIST: " + fileSelectedFromSelected);
-        namesListView.getSelectionModel().clearSelection();
+        namesTableView.getSelectionModel().clearSelection();
 
         if (mouseEvent.getClickCount() == 2) {
             removeFromSelected();
@@ -198,7 +231,7 @@ public class Controller implements Initializable {
 
     //Adds a name from the database to the selected list
     public void addToSelected() {
-        fileSelected = namesListView.getSelectionModel().getSelectedItem();
+        fileSelected = namesTableView.getSelectionModel().getSelectedItem();
 
         if (fileSelected != null) {
             listOfNamesNotSelected.remove(fileSelected);
@@ -226,5 +259,11 @@ public class Controller implements Initializable {
         selectedListView.setItems(listToView);
         selectedListView.getSelectionModel().clearSelection();
     }
+
+    
+    public static List<NameFile> getAddedNames(){
+        return namesListArray;
+    }
+
 
 }
