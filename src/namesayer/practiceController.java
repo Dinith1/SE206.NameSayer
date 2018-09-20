@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.sound.sampled.AudioFormat;
@@ -44,6 +45,8 @@ public class practiceController implements Initializable {
 	private String selectedArchive;
 
 	private boolean contains;
+
+	private String toPlay;
 
 	@FXML
 	private Button prevButton;
@@ -69,10 +72,10 @@ public class practiceController implements Initializable {
 	private Button micTestButton;
 
 	@FXML
-	private ListView<String> availableList;
+	private ListView<String> availableListView;
 
 	@FXML
-	private ListView<String> displayList;
+	private ListView<String> displayListView;
 
 	@FXML
 	private ProgressBar recordingIndicator;
@@ -83,96 +86,32 @@ public class practiceController implements Initializable {
 	@FXML
 	private ProgressBar micBar = new ProgressBar();
 
+	@FXML
+	private Label playingLabel;
+
 	private Service<Void> bgThread;
 
     private List<NameFile> nameDatabase;
 
-    
-    
-    
+    private File creations = new File("./Creations");
 
-	public void handlePrevButton(ActionEvent actionEvent) {
-		if (selectedIndex == 0) {
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().selectFirst();
-		} else {
-			selectedIndex--;
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().select(selectedIndex);
-		}
-		selectedName = displayList.getSelectionModel().getSelectedItem();
-
-	}
+    private NameFile currentName;
 
 
-
-	public void handleNextButton(ActionEvent actionEvent) {
-		if (selectedIndex == listToPlay.size() - 1) {
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().selectLast();
-
-		} else {
-			selectedIndex++;
-			displayList.scrollTo(selectedIndex);
-			displayList.getSelectionModel().select(selectedIndex);
-		}
-		selectedName = displayList.getSelectionModel().getSelectedItem();
-
-	}
-
-
-
-
-
-	public void handleArcListClicked(MouseEvent mouseEvent) {
-
-		selectedArchive = availableList.getSelectionModel().getSelectedItem();
-	}
-
-
-	public void handleDeleteArc(ActionEvent actionEvent) {
-
-		if (selectedArchive == null) {
-			noFileAlert();
-		} else {
-
-			File file = new File("Names/" + selectedArchive + ".mp4");
-			if (file.exists()) {
-
-				Alert deleteConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete:" + selectedArchive + "?", ButtonType.YES, ButtonType.NO);
-				deleteConfirm.showAndWait();
-				if (deleteConfirm.getResult() == ButtonType.YES) {
-
-					File toDelete = new File("Names/" + selectedArchive + ".mp4");
-					try {
-						Files.deleteIfExists(toDelete.toPath());
-					} catch (IOException e) {
-
-					}
-
-					updateArchive();
-					availableList.getSelectionModel().clearSelection();
-
-				}
-			} else {
-				if (!contains) {
-					availableList.setMouseTransparent(true);
-					availableList.setFocusTraversable(false);
-				}
-			}
-		}
-	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		nameDatabase = Controller.getAddedNames();
 		listToPlay = FXCollections.observableArrayList(Controller.getSelectedList());
-		displayList.setItems(listToPlay);
-		displayList.getSelectionModel().clearSelection();
-		displayList.getSelectionModel().selectFirst();
+		displayListView.setItems(listToPlay);
+		displayListView.getSelectionModel().clearSelection();
+		displayListView.getSelectionModel().selectFirst();
 		selectedIndex = 0;
 
-		selectedName = displayList.getSelectionModel().getSelectedItem();
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		playingLabel.setText(selectedName);
+		getCurrentName();
+		updateArchive();
 
 
 		// Microphone level
@@ -198,7 +137,7 @@ public class practiceController implements Initializable {
 				while(true) {
 					byte[] bytes = new byte[line.getBufferSize() / 5];
 					line.read(bytes, 0, bytes.length);
-					System.out.println("RMS Level: " + calculateRMSLevel(bytes));
+//					System.out.println("RMS Level: " + calculateRMSLevel(bytes));
 					double prog = (double)calculateRMSLevel(bytes) / 70;
 					micBar.setProgress(prog);
 				}
@@ -206,6 +145,213 @@ public class practiceController implements Initializable {
 		}.start();
 
 	}
+    
+
+	public void handlePrevButton(ActionEvent actionEvent) {
+		if (selectedIndex == 0) {
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().selectFirst();
+		} else {
+			selectedIndex--;
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().select(selectedIndex);
+		}
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		playingLabel.setText(selectedName);
+		getCurrentName();
+		updateArchive();
+
+	}
+
+
+
+	public void handleNextButton(ActionEvent actionEvent) {
+		if (selectedIndex == listToPlay.size() - 1) {
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().selectLast();
+
+		} else {
+			selectedIndex++;
+			displayListView.scrollTo(selectedIndex);
+			displayListView.getSelectionModel().select(selectedIndex);
+		}
+		selectedName = displayListView.getSelectionModel().getSelectedItem();
+		playingLabel.setText(selectedName);
+		getCurrentName();
+		updateArchive();
+
+
+	}
+
+
+	public void handlePlayButton(ActionEvent actionEvent) {
+//        showListeningStage();
+//        playButton.setDisable(true);
+//        prevButton.setDisable(true);
+//        nextButton.setDisable(true);
+
+		toPlay = currentName.getFileName();
+		System.out.println(toPlay);
+
+//        Service<Void> background = new Service<Void>() {
+//            @Override
+//            protected Task<Void> createTask() {
+//                return new Task<Void>() {
+//                    @Override
+//                    protected Void call() throws Exception {
+//                        File recording = new File("names/" + toPlay);
+//                        String path = recording.toString();
+//                        Media media = new Media(new File(path).toURI().toString());
+//                        MediaPlayer audioPlayer = new MediaPlayer(media);
+//                        audioPlayer.play();
+//                        return null;
+//                    }
+//                };
+//            }
+//        };
+//
+//        background.start();
+//        background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+//            @Override
+//            public void handle(WorkerStateEvent event) {
+//                playButton.setDisable(false);
+//                prevButton.setDisable(false);
+//                nextButton.setDisable(false);
+//                listeningStage.close();
+//            }
+//        });
+	}
+
+
+
+	public void handleArcListClicked(MouseEvent mouseEvent) {
+
+		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
+	}
+
+
+	public void handleDeleteArc(ActionEvent actionEvent) {
+
+		if (selectedArchive == null) {
+			noFileAlert();
+		} else {
+
+			String fileString = "Creations/"+selectedArchive;
+			File toDelete = new File(fileString +".wav");
+			if (toDelete.exists()) {
+
+				Alert deleteConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete:" + selectedArchive + "?", ButtonType.YES, ButtonType.NO);
+				deleteConfirm.showAndWait();
+				if (deleteConfirm.getResult() == ButtonType.YES) {
+
+					try {
+						Files.deleteIfExists(toDelete.toPath());
+					} catch (IOException e) {
+					}
+
+					currentName.deleteAttempt(fileString);
+					updateArchive();
+					availableListView.getSelectionModel().clearSelection();
+
+				}
+			} else {
+				if (!contains) {
+					availableListView.setMouseTransparent(true);
+					availableListView.setFocusTraversable(false);
+				}
+			}
+		}
+	}
+
+	public void handlePlayArc(ActionEvent actionEvent) {
+		if (selectedArchive == null) {
+			noFileAlert();
+		} else {
+			showListeningStage();
+			playArcButton.setDisable(true);
+			deleteArcButton.setDisable(true);
+			Service<Void> background = new Service<Void>() {
+				@Override
+				protected Task<Void> createTask() {
+					return new Task<Void>() {
+						@Override
+						protected Void call() throws Exception {
+							File recording = new File("Names/" + selectedArchive + ".wav");
+							String path = recording.toString();
+							Media media = new Media(new File(path).toURI().toString());
+							MediaPlayer audioPlayer = new MediaPlayer(media);
+							audioPlayer.play();
+							return null;
+						}
+					};
+				}
+			};
+
+			background.start();
+			background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+				@Override
+				public void handle(WorkerStateEvent event) {
+					playArcButton.setDisable(false);
+					deleteArcButton.setDisable(false);
+					listeningStage.close();
+				}
+			});
+		}
+	}
+
+
+	// Update attempts list
+	public void updateArchive() {
+		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
+		if(recordedList.size() == 0){
+			contains = false;
+			availableListView.setMouseTransparent(true);
+			availableListView.setFocusTraversable(false);
+
+		} else {
+			contains = true;
+			availableListView.setMouseTransparent(false);
+			availableListView.setFocusTraversable(true);
+		}
+		availableListView.setItems(recordedList);
+		availableListView.getSelectionModel().clearSelection();
+	}
+
+    public void handleRecordAction(ActionEvent actionEvent) {
+        int attempt = 0;
+
+        File nameRecording = new File("./Creations/" + selectedName +"_attempt"+ attempt);
+        while (nameRecording.exists()) {
+            attempt++;
+            nameRecording = new File("./Creations/" + selectedName + "_attempt"+ attempt);
+        }
+
+		String recordingName = selectedName+"_attempt"+attempt;
+        String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
+        ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
+		recordAudio.directory(creations);
+        try {
+            recordAudio.start();
+
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+            }
+        } catch (IOException e) {
+        }
+
+        currentName.addAttempt(recordingName);
+        updateArchive();
+    }
+
+ 
+    public void noFileAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("ERROR");
+        alert.setHeaderText(null);
+        alert.setContentText("No file selected");
+        alert.showAndWait();
+    }
 
 	// https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
 	protected static int calculateRMSLevel(byte[] audioData) {
@@ -224,132 +370,6 @@ public class practiceController implements Initializable {
 		return (int)(Math.pow(averageMeanSquare,0.5d) + 0.5);
 	}
 
-
-	// Update attempts list
-	public void updateArchive() {
-
-	}
-
-	
-	public void handleMicTest(ActionEvent actionEvent) {
-		
-	}
-
-
-	//Exits test mic window
-	public void handleExitMic(ActionEvent actionEvent) {
-		Stage currentStage = (Stage) exitMicButton.getScene().getWindow();
-		currentStage.close();
-	}
-
-
-    public void handlePlayButton(ActionEvent actionEvent) {
-        showListeningStage();
-        playButton.setDisable(true);
-        prevButton.setDisable(true);
-        nextButton.setDisable(true);
-
-        Service<Void> background = new Service<Void>() {
-            @Override
-            protected Task<Void> createTask() {
-                return new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        File recording = new File("Names/" + selectedName + ".wav");
-                        String path = recording.toString();
-                        Media media = new Media(new File(path).toURI().toString());
-                        MediaPlayer audioPlayer = new MediaPlayer(media);
-                        audioPlayer.play();
-                        return null;
-                    }
-                };
-            }
-        };
-
-        background.start();
-        background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-            @Override
-            public void handle(WorkerStateEvent event) {
-                playButton.setDisable(false);
-                prevButton.setDisable(false);
-                nextButton.setDisable(false);
-                listeningStage.close();
-            }
-        });
-    }
-
-
-
-    public void handleRecordAction(ActionEvent actionEvent) {
-        int attempt = 1;
-
-        File nameRecording = new File("/Attempts/" + selectedName + attempt);
-        while (nameRecording.exists()) {
-            attempt++;
-            nameRecording = new File("/Attempts/" + selectedName + attempt);
-        }
-
-
-        String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + selectedName + "\"attempt_" + attempt + ".wav";
-        ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
-
-        try {
-            recordAudio.start();
-
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-            }
-        } catch (IOException e) {
-        }
-    }
-
-    public void handlePlayArc(ActionEvent actionEvent) {
-        if (selectedArchive == null) {
-            noFileAlert();
-        } else {
-            showListeningStage();
-            playArcButton.setDisable(true);
-            deleteArcButton.setDisable(true);
-            Service<Void> background = new Service<Void>() {
-                @Override
-                protected Task<Void> createTask() {
-                    return new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            File recording = new File("Names/" + selectedArchive + ".wav");
-                            String path = recording.toString();
-                            Media media = new Media(new File(path).toURI().toString());
-                            MediaPlayer audioPlayer = new MediaPlayer(media);
-                            audioPlayer.play();
-                            return null;
-                        }
-                    };
-                }
-            };
-
-            background.start();
-            background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    playArcButton.setDisable(false);
-                    deleteArcButton.setDisable(false);
-                    listeningStage.close();
-                }
-            });
-        }
-    }
-
- 
-    public void noFileAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("ERROR");
-        alert.setHeaderText(null);
-        alert.setContentText("No file selected");
-        alert.showAndWait();
-    }
-
-
     public void showListeningStage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
@@ -362,4 +382,11 @@ public class practiceController implements Initializable {
         }
     }
 
+    public void getCurrentName(){
+		for (NameFile n : nameDatabase){
+			if (n.getListName().equals(selectedName)){
+				currentName = n;
+			}
+		}
+	}
 }

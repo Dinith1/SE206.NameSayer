@@ -39,7 +39,7 @@
             </Pane>
             <Pane maxHeight="300.0" maxWidth="200.0" minHeight="291.0" minWidth="200.0" prefHeight="291.0" prefWidth="200.0">
                <children>
-                  <ListView fx:id="displayList" layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="291.0" minWidth="190.0" prefHeight="291.0" prefWidth="190.0" />
+                  <ListView fx:id="displayListView" layoutX="5.0" maxHeight="300.0" maxWidth="190.0" minHeight="291.0" minWidth="190.0" prefHeight="291.0" prefWidth="190.0" />
                </children>
             </Pane>
             <Pane prefHeight="200.0" prefWidth="200.0">
@@ -88,7 +88,7 @@
             <Pane prefHeight="35.0" prefWidth="400.0" />
             <Pane maxHeight="188.0" maxWidth="400.0" minHeight="120.0" minWidth="400.0" prefHeight="188.0" prefWidth="400.0">
                <children>
-                  <ListView fx:id="availableList" layoutX="3.0" layoutY="28.0" onMouseClicked="#handleArcListClicked" prefHeight="104.0" prefWidth="395.0" />
+                  <ListView fx:id="availableListView" layoutX="3.0" layoutY="28.0" onMouseClicked="#handleArcListClicked" prefHeight="104.0" prefWidth="395.0" />
                   <GridPane alignment="CENTER" layoutX="125.0" layoutY="135.0" prefWidth="150.0">
                      <children>
                         <Button fx:id="playArcButton" mnemonicParsing="false" onAction="#handlePlayArc" prefHeight="30.0" prefWidth="70.0" text="Play" />
@@ -113,7 +113,7 @@
                               </Label>
                            </children>
                         </Pane>
-                        <Label fx:id="playingLabel" text="Name">
+                        <Label fx:id="playingLabel" text="">
                            <font>
                               <Font size="20.0" />
                            </font>
@@ -135,7 +135,6 @@
                <children>
                   <ProgressBar fx:id="recordingIndicator" layoutX="75.0" layoutY="14.0" prefHeight="25.0" prefWidth="250.0" progress="0.0" />
                   <Button fx:id="recordButton" layoutX="160.0" layoutY="46.0" mnemonicParsing="false" onAction="#handleRecordAction" prefHeight="30.0" prefWidth="80.0" text="Record" textAlignment="CENTER" underline="true" />
-                  <Button fx:id="micTestButton" layoutX="263.0" layoutY="49.0" maxHeight="25.0" maxWidth="25.0" minHeight="25.0" minWidth="25.0" mnemonicParsing="false" onAction="#handleMicTest" prefHeight="25.0" prefWidth="25.0" />
                </children>
             </Pane>
          </children>
