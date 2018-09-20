@@ -90,7 +90,7 @@ public class Controller implements Initializable {
 
     }
 
-
+    // REFERENCE THIS
     public static void hackTooltipStartTiming(Tooltip tooltip) {
         try {
             Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
@@ -116,11 +116,13 @@ public class Controller implements Initializable {
 
     //Initialises the database list
     public void initialiseListNotSelected() {
-        listOfNamesNotSelected = new ArrayList<>();
+        // listOfNamesNotSelected = new ArrayList<>();
         namesListArray = new ArrayList<>();
         File nameFolder = new File("names");
         System.out.println(nameFolder);
         listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        
         for (int i = 0; i < listOfNamesInDatabase.size(); i++) {
             int attempt = 1;
             String currentFile = listOfNamesInDatabase.get(i);
