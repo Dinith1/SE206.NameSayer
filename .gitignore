@@ -1,2 +1,3 @@
 /bin/
-*.xml
+/.idea/workspace.xml
+
