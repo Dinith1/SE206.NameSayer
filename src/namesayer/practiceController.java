@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -72,6 +73,8 @@ public class practiceController implements Initializable {
 
     @FXML
     private Button exitMicButton;
+
+    private List<NameFile> nameDatabase;
 
 
 
@@ -242,6 +245,7 @@ public class practiceController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         listToPlay = FXCollections.observableArrayList(Controller.getSelectedList());
+        nameDatabase = Controller.getAddedNames();
         displayList.setItems(listToPlay);
         displayList.getSelectionModel().clearSelection();
         displayList.getSelectionModel().selectFirst();
