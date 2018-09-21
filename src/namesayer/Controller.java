@@ -137,9 +137,11 @@ public class Controller implements Initializable {
                 attempt++;
                 listName = justName + "_" + attempt;
             }
+            
             listOfNamesNotSelected.add(listName);
             NameFile name = new NameFile(currentFile, listName);
-            if(badRatingList.contains(currentFile)){
+            
+            if(badRatingList.contains(currentFile)) {
                 name.setRating(true);
             }
             namesListArray.add(name);

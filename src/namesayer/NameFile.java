@@ -16,7 +16,6 @@ public class NameFile {
     public NameFile(String fileName, String listName) {
         _fileName= new SimpleStringProperty(fileName);
         _listName = new SimpleStringProperty(listName);
-
     }
 
     public String getName() {
@@ -24,7 +23,7 @@ public class NameFile {
         return (_fileName.get().substring(0, point)) + (_listName.get());
     }
 
-    public String getFileName(){
+    public String getFileName() {
         return _fileName.get();
     }
 
@@ -32,7 +31,7 @@ public class NameFile {
         return _rating;
     }
 
-    public void setRating(boolean rating){
+    public void setRating(boolean rating) {
         _rating = rating;
     }
 
@@ -40,18 +39,18 @@ public class NameFile {
         return _listName.get();
     }
 
-    public void addAttempt(String attemptFileName){
+    public void addAttempt(String attemptFileName) {
         attemptList.add(attemptFileName);
     }
 
-    public List<String> getAttemptList(){
+    public List<String> getAttemptList() {
         if(!attemptList.isEmpty()) {
             Collections.sort(attemptList);
         }
         return attemptList;
     }
 
-    public void deleteAttempt(String attemptFileName){
+    public void deleteAttempt(String attemptFileName) {
         attemptList.remove(attemptFileName);
     }
 
