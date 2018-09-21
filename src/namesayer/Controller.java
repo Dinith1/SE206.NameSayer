@@ -19,6 +19,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -43,6 +44,8 @@ public class Controller implements Initializable {
 
     private String fileSelected;
     private String fileSelectedFromSelected;
+    
+    Stage practiceStage = new Stage();
 
     @FXML
     private TableView<String> namesTableView;
@@ -57,7 +60,7 @@ public class Controller implements Initializable {
 
     @FXML
     private Button practiceButton;
-
+    
     @FXML
     private CheckBox randomBox = new CheckBox();
     private boolean isRandom = randomBox.isSelected();
@@ -87,10 +90,10 @@ public class Controller implements Initializable {
         selectedListView.setTooltip(selectedListTooltip);
         nameColumn.setCellValueFactory( new PropertyValueFactory<NameFile, String>("_listName"));
         ratingColumn.setCellValueFactory( new PropertyValueFactory<NameFile, String>("_rating"));
-
+        practiceStage.initModality(Modality.APPLICATION_MODAL);
     }
 
-
+    // REFERENCE THIS
     public static void hackTooltipStartTiming(Tooltip tooltip) {
         try {
             Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
@@ -116,11 +119,13 @@ public class Controller implements Initializable {
 
     //Initialises the database list
     public void initialiseListNotSelected() {
-        listOfNamesNotSelected = new ArrayList<>();
+        // listOfNamesNotSelected = new ArrayList<>();
         namesListArray = new ArrayList<>();
         File nameFolder = new File("names");
         System.out.println(nameFolder);
         listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+        
         for (int i = 0; i < listOfNamesInDatabase.size(); i++) {
             int attempt = 0;
             String currentFile = listOfNamesInDatabase.get(i);
@@ -128,9 +133,10 @@ public class Controller implements Initializable {
             int startIndex = currentFile.lastIndexOf("_") + 1;
             int endIndex = currentFile.lastIndexOf(".");
             System.out.println(startIndex + "....." + endIndex);
-
             String justName = currentFile.substring(startIndex, endIndex);
             String listName = justName;
+
+
             while (listOfNamesNotSelected.contains(listName)) {
                 attempt++;
                 listName = justName + "_" + attempt;
@@ -172,7 +178,6 @@ public class Controller implements Initializable {
             nonSelectedAlert.setContentText("No name(s) have been selected. Please select at least one name to practice");
             nonSelectedAlert.showAndWait();
         } else {
-
             if (isRandom) {
                 Collections.shuffle(listOfNamesSelected);
             }
@@ -180,16 +185,16 @@ public class Controller implements Initializable {
             try {
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/practiceMenu.fxml"));
                 Parent root = fxmlLoader.load();
-                Stage stage = new Stage();
-                stage.setTitle("Practice selected names");
-                stage.setScene(new Scene(root, 600, 400));
-                stage.show();
+                //Stage stage = new Stage();
+                practiceStage.setTitle("Practice selected names");
+                practiceStage.setScene(new Scene(root, 600, 400));
+                practiceStage.show();
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("shit happened");
             }
 
-            closeCurrentStage(practiceButton);
+            //closeCurrentStage(practiceButton);
         }
     }
 
@@ -273,6 +278,14 @@ public class Controller implements Initializable {
     public static List<NameFile> getAddedNames(){
         return namesListArray;
     }
+    
+    
+    public void dragDoNothing() {
+    	
+    }
+    
+    
+    
 
 
 

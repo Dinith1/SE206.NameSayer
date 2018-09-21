@@ -27,7 +27,7 @@
          <children>
             <HBox prefHeight="30.0" prefWidth="200.0">
                <children>
-                  <Button mnemonicParsing="false" text="Return">
+                  <Button fx:id="returnButton" mnemonicParsing="false" onAction="#returnToMain" text="Return">
                      <HBox.margin>
                         <Insets left="5.0" top="2.0" />
                      </HBox.margin>
