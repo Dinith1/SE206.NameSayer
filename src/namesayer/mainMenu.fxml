@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -12,6 +7,8 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -19,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="namesayer.Controller">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="namesayer.Controller">
    <left>
       <VBox alignment="TOP_CENTER" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
@@ -42,7 +39,7 @@
                               <content>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView fx:id="namesTableView" onMouseClicked="#handleUnselectedListClicked" prefHeight="330.0" prefWidth="300.0">
+                                          <TableView fx:id="namesTableView" onDragDetected="#dragDoNothing" onDragDone="#dragDoNothing" onDragDropped="#dragDoNothing" onDragEntered="#dragDoNothing" onDragExited="#dragDoNothing" onDragOver="#dragDoNothing" onMouseClicked="#handleUnselectedListClicked" onMouseDragEntered="#dragDoNothing" onMouseDragExited="#dragDoNothing" onMouseDragOver="#dragDoNothing" onMouseDragReleased="#dragDoNothing" onMouseDragged="#dragDoNothing" prefHeight="330.0" prefWidth="300.0">
                                             <columns>
                                               <TableColumn fx:id="nameColumn" maxWidth="200.0" prefWidth="200.0" text="Name" />
                                               <TableColumn fx:id="ratingColumn" maxWidth="100.0" prefWidth="100.0" text="Rating" />

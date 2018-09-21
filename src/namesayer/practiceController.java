@@ -49,6 +49,9 @@ public class practiceController implements Initializable {
 	private String toPlay;
 
 	@FXML
+	private Button returnButton;
+
+	@FXML
 	private Button prevButton;
 
 	@FXML
@@ -66,7 +69,7 @@ public class practiceController implements Initializable {
 	@FXML
 	private Button recordButton;
 
-    private Stage listeningStage;
+	private Stage listeningStage;
 
 	@FXML
 	private Button micTestButton;
@@ -91,11 +94,12 @@ public class practiceController implements Initializable {
 
 	private Service<Void> bgThread;
 
-    private List<NameFile> nameDatabase;
+	private List<NameFile> nameDatabase;
 
-    private File creations = new File("./Creations");
+	private File creations = new File("./Creations");
 
-    private NameFile currentName;
+	private NameFile currentName;
+
 
 
 
@@ -118,6 +122,7 @@ public class practiceController implements Initializable {
 		new Thread() {
 			@Override
 			public void run() {
+				micBar.setStyle("-fx-accent: red;");
 				// Open a TargetDataLine for getting microphone input & sound level
 				TargetDataLine line = null;
 				AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
@@ -137,15 +142,20 @@ public class practiceController implements Initializable {
 				while(true) {
 					byte[] bytes = new byte[line.getBufferSize() / 5];
 					line.read(bytes, 0, bytes.length);
-//					System.out.println("RMS Level: " + calculateRMSLevel(bytes));
+					System.out.println("RMS Level: " + calculateRMSLevel(bytes));
 					double prog = (double)calculateRMSLevel(bytes) / 70;
 					micBar.setProgress(prog);
+
+					if (!micBar.getScene().getWindow().isShowing()) {
+						line.close();
+						return;
+					}
 				}
 			}
 		}.start();
 
 	}
-    
+
 
 	public void handlePrevButton(ActionEvent actionEvent) {
 		if (selectedIndex == 0) {
@@ -185,41 +195,41 @@ public class practiceController implements Initializable {
 
 
 	public void handlePlayButton(ActionEvent actionEvent) {
-//        showListeningStage();
-//        playButton.setDisable(true);
-//        prevButton.setDisable(true);
-//        nextButton.setDisable(true);
+		//        showListeningStage();
+		//        playButton.setDisable(true);
+		//        prevButton.setDisable(true);
+		//        nextButton.setDisable(true);
 
 		toPlay = currentName.getFileName();
 		System.out.println(toPlay);
 
-//        Service<Void> background = new Service<Void>() {
-//            @Override
-//            protected Task<Void> createTask() {
-//                return new Task<Void>() {
-//                    @Override
-//                    protected Void call() throws Exception {
-//                        File recording = new File("names/" + toPlay);
-//                        String path = recording.toString();
-//                        Media media = new Media(new File(path).toURI().toString());
-//                        MediaPlayer audioPlayer = new MediaPlayer(media);
-//                        audioPlayer.play();
-//                        return null;
-//                    }
-//                };
-//            }
-//        };
-//
-//        background.start();
-//        background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-//            @Override
-//            public void handle(WorkerStateEvent event) {
-//                playButton.setDisable(false);
-//                prevButton.setDisable(false);
-//                nextButton.setDisable(false);
-//                listeningStage.close();
-//            }
-//        });
+		//        Service<Void> background = new Service<Void>() {
+		//            @Override
+		//            protected Task<Void> createTask() {
+		//                return new Task<Void>() {
+		//                    @Override
+		//                    protected Void call() throws Exception {
+		//                        File recording = new File("names/" + toPlay);
+		//                        String path = recording.toString();
+		//                        Media media = new Media(new File(path).toURI().toString());
+		//                        MediaPlayer audioPlayer = new MediaPlayer(media);
+		//                        audioPlayer.play();
+		//                        return null;
+		//                    }
+		//                };
+		//            }
+		//        };
+		//
+		//        background.start();
+		//        background.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+		//            @Override
+		//            public void handle(WorkerStateEvent event) {
+		//                playButton.setDisable(false);
+		//                prevButton.setDisable(false);
+		//                nextButton.setDisable(false);
+		//                listeningStage.close();
+		//            }
+		//        });
 	}
 
 
@@ -317,41 +327,48 @@ public class practiceController implements Initializable {
 		availableListView.getSelectionModel().clearSelection();
 	}
 
-    public void handleRecordAction(ActionEvent actionEvent) {
-        int attempt = 0;
+	public void handleRecordAction(ActionEvent actionEvent) {
+		int attempt = 0;
 
-        File nameRecording = new File("./Creations/" + selectedName +"_attempt"+ attempt);
-        while (nameRecording.exists()) {
-            attempt++;
-            nameRecording = new File("./Creations/" + selectedName + "_attempt"+ attempt);
-        }
+		File nameRecording = new File("./Creations/" + selectedName +"_attempt"+ attempt);
+		while (nameRecording.exists()) {
+			attempt++;
+			nameRecording = new File("./Creations/" + selectedName + "_attempt"+ attempt);
+		}
 
 		String recordingName = selectedName+"_attempt"+attempt;
-        String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
-        ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
+		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
+		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
-        try {
-            recordAudio.start();
+		
+		// Time 5 seconds and set progress bar accordingly 
+		new Thread() {
+			@Override
+			public void run() {
+				long startTime = System.currentTimeMillis();
+				recordButton.setDisable(true);
+				while (System.currentTimeMillis() < (startTime+5000)) {
+					double recordingProgress = (System.currentTimeMillis() - startTime) / 5000.0;
+					System.out.println("..........." + recordingProgress);
+					recordingIndicator.setProgress(recordingProgress);
+				}
+				recordButton.setDisable(false);
+				return;
+			}
+		}.start();
+		
+		currentName.addAttempt(recordingName);
+		updateArchive();
+	}
 
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-            }
-        } catch (IOException e) {
-        }
 
-        currentName.addAttempt(recordingName);
-        updateArchive();
-    }
-
- 
-    public void noFileAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("ERROR");
-        alert.setHeaderText(null);
-        alert.setContentText("No file selected");
-        alert.showAndWait();
-    }
+	public void noFileAlert() {
+		Alert alert = new Alert(Alert.AlertType.INFORMATION);
+		alert.setTitle("ERROR");
+		alert.setHeaderText(null);
+		alert.setContentText("No file selected");
+		alert.showAndWait();
+	}
 
 	// https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
 	protected static int calculateRMSLevel(byte[] audioData) {
@@ -370,23 +387,31 @@ public class practiceController implements Initializable {
 		return (int)(Math.pow(averageMeanSquare,0.5d) + 0.5);
 	}
 
-    public void showListeningStage() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
-            Parent root = fxmlLoader.load();
-            listeningStage = new Stage();
-            listeningStage.setTitle("Please wait");
-            listeningStage.setScene(new Scene(root, 200, 100));
-            listeningStage.show();
-        } catch (IOException e){
-        }
-    }
+	public void showListeningStage() {
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
+			Parent root = fxmlLoader.load();
+			listeningStage = new Stage();
+			listeningStage.setTitle("Please wait");
+			listeningStage.setScene(new Scene(root, 200, 100));
+			listeningStage.show();
+		} catch (IOException e){
 
-    public void getCurrentName(){
-		for (NameFile n : nameDatabase){
-			if (n.getListName().equals(selectedName)){
+		}
+	}
+
+	public void getCurrentName() {
+		for (NameFile n : nameDatabase) {
+			if (n.getListName().equals(selectedName)) {
 				currentName = n;
 			}
 		}
 	}
+
+
+	public void returnToMain() {
+		returnButton.getScene().getWindow().hide();
+	}
+
+
 }
