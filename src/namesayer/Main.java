@@ -27,11 +27,20 @@ public class Main extends Application {
     }
 
     public static void initialise() {
-        File archiveFolder = new File("user.dir" + "/Creations");
+        File archiveFolder = new File("./Creations");
         if (!archiveFolder.exists()) {
             ProcessBuilder createNameDir = new ProcessBuilder("/bin/bash", "-c", "mkdir ./Creations");
             try {
                 createNameDir.start();
+            } catch (IOException e) {
+            }
+        }
+
+
+        File ratingFile = new File("Bad_Ratings.txt");
+        if(!ratingFile.exists()){
+            try {
+                ratingFile.createNewFile();
             } catch (IOException e) {
             }
         }

@@ -18,13 +18,11 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
@@ -81,7 +79,7 @@ public class practiceController implements Initializable {
 	private ProgressBar recordingIndicator;
 
 	@FXML
-	private Button exitMicButton;
+	private Button rateButton;
 
 	@FXML
 	private ProgressBar micBar = new ProgressBar();
@@ -97,6 +95,17 @@ public class practiceController implements Initializable {
 
     private NameFile currentName;
 
+    private List<String> listOfAttempts;
+
+    private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy_HHmmss");
+    private Date date;
+
+    private List<String> badRatingList;
+
+    private FileWriter fw;
+	private BufferedWriter bw;
+	private PrintWriter out;
+
 
 
 	@Override
@@ -110,8 +119,8 @@ public class practiceController implements Initializable {
 
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
-		getCurrentName();
-		updateArchive();
+		newNameSelected();
+
 
 
 		// Microphone level
@@ -158,8 +167,7 @@ public class practiceController implements Initializable {
 		}
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
-		getCurrentName();
-		updateArchive();
+		newNameSelected();
 
 	}
 
@@ -177,8 +185,7 @@ public class practiceController implements Initializable {
 		}
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
-		getCurrentName();
-		updateArchive();
+		newNameSelected();
 
 
 	}
@@ -227,6 +234,7 @@ public class practiceController implements Initializable {
 	public void handleArcListClicked(MouseEvent mouseEvent) {
 
 		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
+		System.out.println(selectedArchive);
 	}
 
 
@@ -236,7 +244,7 @@ public class practiceController implements Initializable {
 			noFileAlert();
 		} else {
 
-			String fileString = "Creations/"+selectedArchive;
+			String fileString = "./Creations/"+selectedArchive;
 			File toDelete = new File(fileString +".wav");
 			if (toDelete.exists()) {
 
@@ -249,7 +257,7 @@ public class practiceController implements Initializable {
 					} catch (IOException e) {
 					}
 
-					currentName.deleteAttempt(fileString);
+					currentName.deleteAttempt(selectedArchive);
 					updateArchive();
 					availableListView.getSelectionModel().clearSelection();
 
@@ -270,13 +278,14 @@ public class practiceController implements Initializable {
 			showListeningStage();
 			playArcButton.setDisable(true);
 			deleteArcButton.setDisable(true);
+
 			Service<Void> background = new Service<Void>() {
 				@Override
 				protected Task<Void> createTask() {
 					return new Task<Void>() {
 						@Override
 						protected Void call() throws Exception {
-							File recording = new File("Names/" + selectedArchive + ".wav");
+							File recording = new File("./Names/" + selectedArchive + ".wav");
 							String path = recording.toString();
 							Media media = new Media(new File(path).toURI().toString());
 							MediaPlayer audioPlayer = new MediaPlayer(media);
@@ -318,15 +327,11 @@ public class practiceController implements Initializable {
 	}
 
     public void handleRecordAction(ActionEvent actionEvent) {
-        int attempt = 0;
+        date = new Date();
+        String currentDate = formatter.format(date);
 
-        File nameRecording = new File("./Creations/" + selectedName +"_attempt"+ attempt);
-        while (nameRecording.exists()) {
-            attempt++;
-            nameRecording = new File("./Creations/" + selectedName + "_attempt"+ attempt);
-        }
-
-		String recordingName = selectedName+"_attempt"+attempt;
+		String recordingName = currentDate +"_"+ selectedName;
+		String test = "tes";
         String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
         ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
@@ -338,6 +343,7 @@ public class practiceController implements Initializable {
             } catch (InterruptedException e) {
             }
         } catch (IOException e) {
+        	e.printStackTrace();
         }
 
         currentName.addAttempt(recordingName);
@@ -384,9 +390,62 @@ public class practiceController implements Initializable {
 
     public void getCurrentName(){
 		for (NameFile n : nameDatabase){
-			if (n.getListName().equals(selectedName)){
+			if (n.toString().equals(selectedName)){
 				currentName = n;
 			}
+		}
+	}
+	public void fillAttemptList(){
+		for(String s : listOfAttempts){
+			int place = s.lastIndexOf("_") +1;
+			int place2 = s.lastIndexOf(".");
+			String nameMatch = s.substring(place, place2);
+
+			if(currentName.toString().equals(nameMatch)){
+				String toAddtoList = s.substring(0, place2);
+				currentName.addAttempt(toAddtoList);
+			}
+		}
+	}
+
+	public void initialiseListOfAttempts(){
+		listOfAttempts= new ArrayList<String>(Arrays.asList(creations.list()));
+	}
+
+	public void handleRateAction(ActionEvent actionEvent) {
+		Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Give " + selectedArchive + " a bad rating?", ButtonType.YES, ButtonType.NO);
+		rateConfirm.showAndWait();
+		if(rateConfirm.getResult() == ButtonType.YES) {
+				currentName.setRating(true);
+				out.println(currentName.getFileName());
+		}
+
+
+	}
+
+	public void checkRate(){
+		if(currentName.getRating()){
+			rateButton.setDisable(true);
+		} else {
+			rateButton.setDisable(false);
+		}
+	}
+
+	public void newNameSelected(){
+		getCurrentName();
+		checkRate();
+		initialiseListOfAttempts();
+		fillAttemptList();
+		updateArchive();
+	}
+
+	public void fileWriterSetUp() {
+		try {
+			fw = new FileWriter("Bad_Ratings.txt", true);
+			bw = new BufferedWriter(fw);
+			out = new PrintWriter(bw);
+
+		} catch(IOException e){
 		}
 	}
 }

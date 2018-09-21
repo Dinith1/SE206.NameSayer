@@ -129,13 +129,14 @@ public class Controller implements Initializable {
             int endIndex = currentFile.lastIndexOf(".");
             System.out.println(startIndex + "....." + endIndex);
 
-            String listName = currentFile.substring(startIndex, endIndex);
+            String justName = currentFile.substring(startIndex, endIndex);
+            String listName = justName;
             while (listOfNamesNotSelected.contains(listName)) {
                 attempt++;
-                listName = listName + "_" + attempt;
+                listName = justName + "_" + attempt;
             }
             listOfNamesNotSelected.add(listName);
-            NameFile name = new NameFile(currentFile, listName, "bad");
+            NameFile name = new NameFile(currentFile, listName);
             namesListArray.add(name);
         }
         System.out.println(listOfNamesNotSelected);
@@ -272,6 +273,7 @@ public class Controller implements Initializable {
     public static List<NameFile> getAddedNames(){
         return namesListArray;
     }
+
 
 
 }

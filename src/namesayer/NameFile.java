@@ -10,25 +10,30 @@ public class NameFile {
 
     private SimpleStringProperty _fileName;
     private SimpleStringProperty _listName;
-    private SimpleStringProperty _rating;
+    private boolean _rating = false;
     private List<String> attemptList = new ArrayList<>();
 
-    public NameFile(String fileName, String listName, String rating) {
+    public NameFile(String fileName, String listName) {
         _fileName= new SimpleStringProperty(fileName);
         _listName = new SimpleStringProperty(listName);
-        _rating = new SimpleStringProperty(rating);
+
     }
 
-    public String getListName() {
-        return _listName.get();
+    public String getName() {
+        int point = _fileName.get().lastIndexOf("_");
+        return (_fileName.get().substring(0, point)) + (_listName.get());
     }
 
     public String getFileName(){
         return _fileName.get();
     }
 
-    public String getRating() {
-        return _rating.get();
+    public boolean getRating() {
+        return _rating;
+    }
+
+    public void setRating(boolean rating){
+        _rating = rating;
     }
 
     public String toString(){
