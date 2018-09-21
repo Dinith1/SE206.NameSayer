@@ -14,8 +14,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
@@ -23,7 +22,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -42,13 +43,15 @@ public class Controller implements Initializable {
     private List<String> listOfArchive;
     private static List<NameFile> namesListArray;
 
+    private List<String> badRatingList = new ArrayList<>();
+
     private String fileSelected;
     private String fileSelectedFromSelected;
     
     Stage practiceStage = new Stage();
 
     @FXML
-    private TableView<String> namesTableView;
+    private ListView<String> namesListView;
     @FXML
     private ListView<String> selectedListView;
 
@@ -68,11 +71,6 @@ public class Controller implements Initializable {
     @FXML
     private ListView<String> archiveListView = new ListView<String>();
 
-    @FXML
-    private TableColumn<NameFile, String> nameColumn;
-
-    @FXML
-    private TableColumn<NameFile, String> ratingColumn;
 
 
     private final Tooltip namesListTooltip = new Tooltip("Double-click to add to chosen names");
@@ -85,11 +83,10 @@ public class Controller implements Initializable {
         initialiseListNotSelected();
         updateListNotSelected();
         initialiseArchive();
+        getBadRatings();
         hackTooltipStartTiming(namesListTooltip);
-        namesTableView.setTooltip(namesListTooltip);
+        namesListView.setTooltip(namesListTooltip);
         selectedListView.setTooltip(selectedListTooltip);
-        nameColumn.setCellValueFactory( new PropertyValueFactory<NameFile, String>("_listName"));
-        ratingColumn.setCellValueFactory( new PropertyValueFactory<NameFile, String>("_rating"));
         practiceStage.initModality(Modality.APPLICATION_MODAL);
     }
 
@@ -119,13 +116,12 @@ public class Controller implements Initializable {
 
     //Initialises the database list
     public void initialiseListNotSelected() {
-        // listOfNamesNotSelected = new ArrayList<>();
+        listOfNamesNotSelected = new ArrayList<>();
         namesListArray = new ArrayList<>();
         File nameFolder = new File("names");
         System.out.println(nameFolder);
         listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
-        listOfNamesNotSelected = new ArrayList<String>(Arrays.asList(nameFolder.list()));
-        
+
         for (int i = 0; i < listOfNamesInDatabase.size(); i++) {
             int attempt = 0;
             String currentFile = listOfNamesInDatabase.get(i);
@@ -143,6 +139,9 @@ public class Controller implements Initializable {
             }
             listOfNamesNotSelected.add(listName);
             NameFile name = new NameFile(currentFile, listName);
+            if(badRatingList.contains(currentFile)){
+                name.setRating(true);
+            }
             namesListArray.add(name);
         }
         System.out.println(listOfNamesNotSelected);
@@ -163,8 +162,8 @@ public class Controller implements Initializable {
     // Called when program is launched to fill the ListView with files
     public void updateListNotSelected() {
         ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
-        namesTableView.setItems(listToView);
-        namesTableView.getSelectionModel().clearSelection();
+        namesListView.setItems(listToView);
+        namesListView.getSelectionModel().clearSelection();
     }
 
 
@@ -201,7 +200,7 @@ public class Controller implements Initializable {
 
     //Handles what to do when a name from the database is clicked
     public void handleUnselectedListClicked(MouseEvent mouseEvent) {
-        fileSelected = namesTableView.getSelectionModel().getSelectedItem();
+        fileSelected = namesListView.getSelectionModel().getSelectedItem();
         System.out.println("LEFT LIST: " + fileSelected);
         selectedListView.getSelectionModel().clearSelection();
 
@@ -214,7 +213,7 @@ public class Controller implements Initializable {
     public void handleSelectedListClicked(MouseEvent mouseEvent) {
         fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
         System.out.println("RIGHT LIST: " + fileSelectedFromSelected);
-        namesTableView.getSelectionModel().clearSelection();
+        namesListView.getSelectionModel().clearSelection();
 
         if (mouseEvent.getClickCount() == 2) {
             removeFromSelected();
@@ -241,7 +240,7 @@ public class Controller implements Initializable {
 
     //Adds a name from the database to the selected list
     public void addToSelected() {
-        fileSelected = namesTableView.getSelectionModel().getSelectedItem();
+        fileSelected = namesListView.getSelectionModel().getSelectedItem();
 
         if (fileSelected != null) {
             listOfNamesNotSelected.remove(fileSelected);
@@ -279,14 +278,15 @@ public class Controller implements Initializable {
         return namesListArray;
     }
     
-    
-    public void dragDoNothing() {
-    	
+    public void getBadRatings(){
+        try{
+            BufferedReader br = new BufferedReader((new FileReader("Bad_Rating.txt")));
+            String line;
+            while((line = br.readLine()) != null){
+                badRatingList.add(line);
+            }
+        } catch (IOException e){
+        }
     }
-    
-    
-    
-
-
 
 }

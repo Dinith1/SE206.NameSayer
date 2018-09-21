@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -16,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="namesayer.Controller">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="namesayer.Controller">
    <left>
       <VBox alignment="TOP_CENTER" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
@@ -31,35 +36,14 @@
             </Pane>
             <HBox alignment="TOP_CENTER" spacing="25.0">
                <children>
-                  <VBox alignment="TOP_CENTER" prefWidth="300.0">
+                  <VBox alignment="TOP_CENTER" maxHeight="385.0" maxWidth="300.0" minHeight="385.0" minWidth="300.0" prefHeight="385.0" prefWidth="300.0">
                      <children>
-                        <TabPane prefWidth="300.0" tabClosingPolicy="UNAVAILABLE">
-                          <tabs>
-                            <Tab text="Database">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                       <children>
-                                          <TableView fx:id="namesTableView" onDragDetected="#dragDoNothing" onDragDone="#dragDoNothing" onDragDropped="#dragDoNothing" onDragEntered="#dragDoNothing" onDragExited="#dragDoNothing" onDragOver="#dragDoNothing" onMouseClicked="#handleUnselectedListClicked" onMouseDragEntered="#dragDoNothing" onMouseDragExited="#dragDoNothing" onMouseDragOver="#dragDoNothing" onMouseDragReleased="#dragDoNothing" onMouseDragged="#dragDoNothing" prefHeight="330.0" prefWidth="300.0">
-                                            <columns>
-                                              <TableColumn fx:id="nameColumn" maxWidth="200.0" prefWidth="200.0" text="Name" />
-                                              <TableColumn fx:id="ratingColumn" maxWidth="100.0" prefWidth="100.0" text="Rating" />
-                                            </columns>
-                                          </TableView>
-                                       </children>
-                                    </AnchorPane>
-                              </content>
-                            </Tab>
-                            <Tab text="Attempts">
-                              <content>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="330.0">
-                                       <children>
-                                          <ListView fx:id="archiveList" prefHeight="330.0" prefWidth="300.0" mouseTransparent="true"/>
-                                       </children>
-                                    </AnchorPane>
-                              </content>
-                            </Tab>
-                          </tabs>
-                        </TabPane>
+                        <Label prefHeight="30.0" text="Names in Database" underline="true" />
+                        <Pane maxHeight="330.0" maxWidth="300.0" minHeight="330.0" minWidth="300.0" prefHeight="330.0" prefWidth="300.0">
+                           <children>
+                              <ListView fx:id="namesListView" maxHeight="330.0" maxWidth="300.0" minHeight="330.0" minWidth="300.0" onMouseClicked="#handleUnselectedListClicked" prefHeight="330.0" prefWidth="300.0" />
+                           </children>
+                        </Pane>
                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#addToSelected" text="Add &gt;">
                            <VBox.margin>
                               <Insets />

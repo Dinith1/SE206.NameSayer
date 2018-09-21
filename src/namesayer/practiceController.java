@@ -69,8 +69,6 @@ public class practiceController implements Initializable {
 
     private Stage listeningStage;
 
-    @FXML
-    private Button micTestButton;
 
     @FXML
     private ListView<String> availableListView;
@@ -90,8 +88,6 @@ public class practiceController implements Initializable {
     @FXML
     private Label playingLabel;
 
-    private Service<Void> bgThread;
-
     private List<NameFile> nameDatabase;
 
     private File creations = new File("./Creations");
@@ -104,11 +100,6 @@ public class practiceController implements Initializable {
     private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy_HHmmss");
     private Date date;
 
-    private List<String> badRatingList;
-
-    private FileWriter fw;
-    private BufferedWriter bw;
-    private PrintWriter out;
 
 
     @Override
@@ -333,7 +324,6 @@ public class practiceController implements Initializable {
     }
 
 
-
     public void handleRecordAction(ActionEvent actionEvent) {
         date = new Date();
         String currentDate = formatter.format(date);
@@ -396,8 +386,7 @@ public class practiceController implements Initializable {
     }
 
 
-
-
+    
     public void showListeningStage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
@@ -437,12 +426,20 @@ public class practiceController implements Initializable {
     }
 
     public void handleRateAction(ActionEvent actionEvent) {
-        Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Give " + selectedArchive + " a bad rating?", ButtonType.YES, ButtonType.NO);
+        Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Give " + selectedName + " a bad rating?", ButtonType.YES, ButtonType.NO);
         rateConfirm.showAndWait();
         if (rateConfirm.getResult() == ButtonType.YES) {
             currentName.setRating(true);
-            out.println(currentName.getFileName());
+            System.out.println(currentName.getFileName());
+            try {
+                FileWriter fw = new FileWriter("Bad_Ratings.txt", true);
+                fw.write(currentName.getFileName() + "\n");
+                fw.close();
+            } catch(IOException e){
+            }
+            rateButton.setDisable(true);
         }
+
 
 
     }
@@ -461,16 +458,6 @@ public class practiceController implements Initializable {
         initialiseListOfAttempts();
         fillAttemptList();
         updateArchive();
-    }
-
-    public void fileWriterSetUp() {
-        try {
-            fw = new FileWriter("Bad_Ratings.txt", true);
-            bw = new BufferedWriter(fw);
-            out = new PrintWriter(bw);
-
-        } catch (IOException e) {
-        }
     }
 
 
