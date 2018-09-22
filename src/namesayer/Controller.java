@@ -2,8 +2,6 @@ package namesayer;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -67,6 +65,7 @@ public class Controller implements Initializable {
 	private final Tooltip selectedListTooltip = new Tooltip("Double-click to remove from chosen names");
 
 	private final ListViewHandler lvHandler = new ListViewHandler();
+	private final TooltipHandler ttHandler = new TooltipHandler();
 
 
 	@Override
@@ -74,30 +73,10 @@ public class Controller implements Initializable {
 		listOfNamesSelected = new ArrayList<>();
 		initialiseListNotSelected();
 		lvHandler.updateList(namesListView, listOfNamesNotSelected);
-		hackTooltipStartTiming(namesListTooltip);
+		ttHandler.hackTooltipStartTiming(namesListTooltip);
 		namesListView.setTooltip(namesListTooltip);
 		selectedListView.setTooltip(selectedListTooltip);
 		practiceStage.initModality(Modality.APPLICATION_MODAL);
-	}
-
-
-	// Taken from https://stackoverflow.com/questions/26854301/how-to-control-the-javafx-tooltips-delay
-	// Makes tooltips appear/disappear faster
-	public static void hackTooltipStartTiming(Tooltip tooltip) {
-		try {
-			Field fieldBehavior = tooltip.getClass().getDeclaredField("BEHAVIOR");
-			fieldBehavior.setAccessible(true);
-			Object objBehavior = fieldBehavior.get(tooltip);
-
-			Field actTimer = objBehavior.getClass().getDeclaredField("activationTimer");
-			actTimer.setAccessible(true);
-			Timeline objActTimer = (Timeline) actTimer.get(objBehavior);
-
-			objActTimer.getKeyFrames().clear();
-			objActTimer.getKeyFrames().add(new KeyFrame(new Duration(200)));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 
@@ -225,8 +204,8 @@ public class Controller implements Initializable {
 			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		}
 	}
-	
-	
+
+
 	public void removeAllFromSelected() {
 		lvHandler.moveWholeList(selectedListView, listOfNamesSelected, namesListView, listOfNamesNotSelected);
 		lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);

@@ -354,7 +354,8 @@ public class practiceController implements Initializable {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
-
+		
+		setAllButtonsDisabled(true);
 		// Time 5 seconds and set progress bar accordingly
 		new Thread() {
 			@Override
@@ -363,10 +364,10 @@ public class practiceController implements Initializable {
 				recordButton.setDisable(true);
 				while (System.currentTimeMillis() < (startTime + 5000)) {
 					double recordingProgress = (System.currentTimeMillis() - startTime) / 5000.0;
-					System.out.println("..........." + recordingProgress);
 					recordingIndicator.setProgress(recordingProgress);
 				}
 				recordButton.setDisable(false);
+				setAllButtonsDisabled(false);
 				return;
 			}
 		}.start();
