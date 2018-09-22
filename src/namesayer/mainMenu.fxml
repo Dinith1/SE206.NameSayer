@@ -1,54 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="namesayer.Controller">
+<BorderPane id="controllerRoot" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="namesayer.Controller">
    <left>
       <VBox alignment="TOP_CENTER" minHeight="250.0" minWidth="350.0" prefHeight="500.0" prefWidth="700.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Pane maxHeight="-Infinity" maxWidth="-Infinity">
-               <children>
-                  <Label alignment="CENTER" maxHeight="35.0" maxWidth="300.0" minHeight="35.0" minWidth="300.0" prefHeight="35.0" prefWidth="300.0" text="Name Sayer" textAlignment="CENTER">
-                     <font>
-                        <Font name="System Bold" size="13.0" />
-                     </font>
-                  </Label>
-               </children>
-            </Pane>
-            <HBox alignment="TOP_CENTER" spacing="25.0">
+            <Label alignment="CENTER" maxHeight="35.0" maxWidth="300.0" minHeight="35.0" minWidth="300.0" prefHeight="35.0" prefWidth="300.0" text="Name Sayer" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="26.0" />
+               </font>
+            </Label>
+            <HBox alignment="TOP_CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" spacing="25.0">
                <children>
                   <VBox alignment="TOP_CENTER" maxHeight="385.0" maxWidth="300.0" minHeight="385.0" minWidth="300.0" prefHeight="385.0" prefWidth="300.0">
                      <children>
-                        <Label prefHeight="30.0" text="Names in Database" underline="true" />
-                        <Pane maxHeight="330.0" maxWidth="300.0" minHeight="330.0" minWidth="300.0" prefHeight="330.0" prefWidth="300.0">
+                        <Label prefHeight="30.0" text="Names in Database">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <ListView fx:id="namesListView" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#handleUnselectedListClicked" prefHeight="330.0" prefWidth="300.0" />
+                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
                            <children>
-                              <ListView fx:id="namesListView" maxHeight="330.0" maxWidth="300.0" minHeight="330.0" minWidth="300.0" onMouseClicked="#handleUnselectedListClicked" prefHeight="330.0" prefWidth="300.0" />
+                              <Button fx:id="addAllButton" mnemonicParsing="false" onAction="#addAllToSelected" text="Add all" />
+                              <Button fx:id="addButton" mnemonicParsing="false" onAction="#addToSelected" text="Add &gt;" />
                            </children>
-                        </Pane>
-                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#addToSelected" text="Add &gt;">
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </Button>
+                        </HBox>
                      </children>
                      <HBox.margin>
                         <Insets />
@@ -56,19 +41,27 @@
                   </VBox>
                   <VBox alignment="TOP_CENTER" prefWidth="300.0">
                      <children>
-                        <Label prefHeight="30.0" text="Names to practice" />
-                        <ListView fx:id="selectedListView" onMouseClicked="#handleSelectedListClicked" prefHeight="330.0" prefWidth="300.0" />
-                        <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeFromSelected" text="&lt; Remove" />
+                        <Label prefHeight="30.0" text="Names to Practice">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                        <ListView fx:id="selectedListView" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#handleSelectedListClicked" prefHeight="330.0" prefWidth="300.0" />
+                        <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="100.0">
+                           <children>
+                              <Button fx:id="removeButton" mnemonicParsing="false" onAction="#removeFromSelected" text="&lt; Remove" />
+                              <Button fx:id="removeAllButton" mnemonicParsing="false" onAction="#removeAllFromSelected" text="Remove all" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>
-               <padding>
-                  <Insets right="1.0" />
-               </padding>
             </HBox>
             <HBox alignment="TOP_CENTER" prefHeight="50.0" prefWidth="700.0" spacing="50.0">
                <children>
-                  <CheckBox fx:id="randomBox" mnemonicParsing="false" onAction="#toggleRandom" text="Randomise" />
+                  <CheckBox fx:id="randomBox" mnemonicParsing="false" onAction="#toggleRandom" text="Randomise">
+                     <HBox.margin>
+                        <Insets top="6.0" />
+                     </HBox.margin></CheckBox>
                   <Button fx:id="practiceButton" mnemonicParsing="false" onAction="#onPracticeAction" text="Practice" underline="true">
                      <font>
                         <Font name="System Bold" size="13.0" />
@@ -76,7 +69,7 @@
                   </Button>
                </children>
                <padding>
-                  <Insets top="20.0" />
+                  <Insets top="10.0" />
                </padding>
             </HBox>
          </children>
