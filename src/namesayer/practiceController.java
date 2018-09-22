@@ -23,7 +23,10 @@ import javafx.util.Duration;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;import java.util.*;
+import java.util.stream.Stream;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -104,7 +107,6 @@ public class practiceController implements Initializable {
 	private Date date;
 
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		nameDatabase = Controller.getAddedNames();
@@ -117,6 +119,7 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
+		setRatingButton();
 
 
 		// Microphone level
@@ -169,7 +172,7 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-
+		setRatingButton();
 	}
 
 
@@ -186,7 +189,7 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-
+		setRatingButton();
 
 	}
 
@@ -217,11 +220,11 @@ public class practiceController implements Initializable {
 		catch (Exception e) {
 			System.out.println("FAILED TO PLAY FILE");
 		}
-		
-		
+
+
 	}
-	
-	
+
+
 	private void setAllButtonsDisabled(boolean b) {
 		playButton.setDisable(b);
 		prevButton.setDisable(b);
@@ -230,11 +233,10 @@ public class practiceController implements Initializable {
 		playArcButton.setDisable(b);
 		deleteArcButton.setDisable(b);
 	}
-	
+
 
 
 	public void handleArcListClicked(MouseEvent mouseEvent) {
-
 		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
 		System.out.println(selectedArchive);
 	}
@@ -334,7 +336,6 @@ public class practiceController implements Initializable {
 		String currentDate = formatter.format(date);
 
 		String recordingName = currentDate + "_" + selectedName;
-		String test = "tes";
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
@@ -342,6 +343,7 @@ public class practiceController implements Initializable {
 		try{
 			recordAudio.start();
 		} catch (IOException e){
+			e.printStackTrace();
 		}
 
 		// Time 5 seconds and set progress bar accordingly
@@ -372,8 +374,9 @@ public class practiceController implements Initializable {
 		alert.setContentText("No file selected");
 		alert.showAndWait();
 	}
+	
 
-	// https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
+	// Taken from https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
 	protected static int calculateRMSLevel(byte[] audioData) {
 		// audioData might be buffered data read from a data line
 		long lSum = 0;
@@ -405,6 +408,7 @@ public class practiceController implements Initializable {
 		}
 	}
 
+	
 	public void getCurrentName() {
 		for (NameFile n : nameDatabase) {
 			if (n.toString().equals(selectedName)) {
@@ -412,6 +416,7 @@ public class practiceController implements Initializable {
 			}
 		}
 	}
+	
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
@@ -425,45 +430,41 @@ public class practiceController implements Initializable {
 			}
 		}
 	}
+	
 
 	public void initialiseListOfAttempts() {
 		listOfAttempts = new ArrayList<String>(Arrays.asList(creations.list()));
 	}
 
-	
+
 	public void handleRateAction(ActionEvent actionEvent) {
-		Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Give " + selectedName + " a bad rating?", ButtonType.YES, ButtonType.NO);
+		Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Change " + selectedName + "'s rating?", ButtonType.YES, ButtonType.NO);
 		rateConfirm.showAndWait();
+		
 		if (rateConfirm.getResult() == ButtonType.YES) {
-			currentName.setRating(true);
 			System.out.println(currentName.getFileName());
-			try {
-				FileWriter fw = new FileWriter("Bad_Ratings.txt", true);
-				fw.write(currentName.getFileName() + "\n");
-				fw.close();
-			} catch(IOException e){
+			toPlay = currentName.getFileName();
+			
+			if(!currentName.checkIfBadRating()) {
+				currentName.setBadRating(true);
+			} else {
+				currentName.setBadRating(false);
 			}
-			rateButton.setDisable(true);
+			setRatingButton();
 		}
-		checkIfBadRating("lol");
-	}
-	
-	
-	private boolean checkIfBadRating(String file) {
-//		File ratingsFile = new File("Bad_Ratings.txt");
-//		BufferedReader reader = new BufferedReader(new FileReader(ratingsFile));
-		Scanner ratingScanner = new Scanner("Bad_Ratings.txt");
-		List<String> ratingsList = new ArrayList<String>();
-		while(ratingScanner.hasNextLine()) {
-			System.out.println(ratingScanner.nextLine());
-			ratingsList.add(ratingScanner.nextLine());
-		}
-		ratingScanner.close();
-		return ratingsList.contains(file);
-
+		
 	}
 
-	
+
+	private void setRatingButton() {
+		if (currentName.checkIfBadRating()) {
+			rateButton.setText("Rate Good");
+		} else {
+			rateButton.setText("Rate Bad");
+		}
+	}
+
+
 	public void checkRate() {
 		if (currentName.getRating()) {
 			rateButton.setDisable(true);
@@ -472,7 +473,7 @@ public class practiceController implements Initializable {
 		}
 	}
 
-	
+
 	public void newNameSelected() {
 		getCurrentName();
 		checkRate();

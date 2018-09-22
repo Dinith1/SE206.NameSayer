@@ -11,6 +11,12 @@ import java.io.IOException;
 
 public class Main extends Application {
 
+	public static void main(String[] args) {
+		initialise();
+		launch(args);
+	}
+	
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		Parent root = FXMLLoader.load(getClass().getResource("mainMenu.fxml"));
@@ -18,14 +24,9 @@ public class Main extends Application {
 		primaryStage.setScene(new Scene(root, 700, 500));
 		primaryStage.show();
 	}
+	
 
-
-	public static void main(String[] args) {
-		initialise();
-		launch(args);
-
-	}
-
+	// Create necessary files for app to work
 	public static void initialise() {
 		File archiveFolder = new File("Creations");
 		if (!archiveFolder.exists()) {            
@@ -35,7 +36,6 @@ public class Main extends Application {
 				e.printStackTrace();
 			}
 		}
-
 		File ratingFile = new File("Bad_Ratings.txt");
 		if(!ratingFile.exists()) {
 			try {
@@ -45,4 +45,6 @@ public class Main extends Application {
 			}
 		}
 	}
+	
+	
 }
