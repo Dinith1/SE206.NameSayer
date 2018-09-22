@@ -386,7 +386,7 @@ public class practiceController implements Initializable {
     }
 
 
-    
+
     public void showListeningStage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
