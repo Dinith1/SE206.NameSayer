@@ -1,13 +1,11 @@
 package namesayer;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -16,10 +14,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +62,9 @@ public class Controller implements Initializable {
 
 	private final ListViewHandler lvHandler = new ListViewHandler();
 	private final TooltipHandler ttHandler = new TooltipHandler();
-
+	
+	private static Parent controllerRoot;
+	
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -127,15 +125,12 @@ public class Controller implements Initializable {
 			try {
 				FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/practiceMenu.fxml"));
 				Parent root = fxmlLoader.load();
-				//Stage stage = new Stage();
-				practiceStage.setTitle("Practice selected names");
-				practiceStage.setScene(new Scene(root, 600, 400));
-				practiceStage.show();
+				namesListView.getScene().setRoot(root);
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("Failed to open practice menu");
 			}
-
+			
 		}
 	}
 
@@ -187,6 +182,9 @@ public class Controller implements Initializable {
 			lvHandler.moveName(fileSelectedFromDatabase, listOfNamesNotSelected, listOfNamesSelected);
 			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		}
+		
+		// This is here to allow changing of scenes in the same window
+		controllerRoot = addButton.getScene().getRoot();
 	}
 
 
@@ -215,6 +213,11 @@ public class Controller implements Initializable {
 	public static List<NameFile> getAddedNames() {
 		return namesListArray;
 	}
-
+	
+	
+	public Parent getControllerRoot() {
+		return controllerRoot;
+	}
+	
 
 }

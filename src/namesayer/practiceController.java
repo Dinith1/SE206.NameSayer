@@ -82,9 +82,6 @@ public class practiceController implements Initializable {
 	@FXML
 	private Button recordButton;
 
-	private Stage listeningStage;
-
-
 	@FXML
 	private ListView<String> availableListView;
 
@@ -115,6 +112,8 @@ public class practiceController implements Initializable {
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy_HHmmss");
 	private Date date;
 
+	private boolean closePractice = false;
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -124,18 +123,17 @@ public class practiceController implements Initializable {
 		displayListView.getSelectionModel().clearSelection();
 		displayListView.getSelectionModel().selectFirst();
 		selectedIndex = 0;
-
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
 		setRatingButton();
 
-
-		// Microphone level
+		// Show microphone level on a ProgressBar
 		new Thread() {
 			@Override
 			public void run() {
 				micBar.setStyle("-fx-accent: red;");
+				// Taken from https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
 				// Open a TargetDataLine for getting microphone input & sound level
 				TargetDataLine line = null;
 				AudioFormat format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, 44100, 16, 2, 4, 44100, false);
@@ -158,7 +156,7 @@ public class practiceController implements Initializable {
 					double prog = (double) calculateRMSLevel(bytes) / 65;
 					micBar.setProgress(prog);
 
-					if (!micBar.getScene().getWindow().isShowing()) {
+					if (closePractice || !micBar.getScene().getWindow().isShowing()) {
 						line.close();
 						return;
 					}
@@ -204,10 +202,7 @@ public class practiceController implements Initializable {
 
 
 	public void handlePlayButton(ActionEvent actionEvent) {
-		showListeningStage();
-
 		toPlay = currentName.getFileName();
-		System.out.println(toPlay);
 
 		// Taken from https://stackoverflow.com/questions/2416935/how-to-play-wav-files-with-java
 		try {
@@ -218,9 +213,9 @@ public class practiceController implements Initializable {
 			Clip clip = (Clip) AudioSystem.getLine(info);
 			clip.open(stream);
 			clip.start();
+			// Disable buttons while audio file plays
 			long frames = stream.getFrameLength();
 			long durationInSeconds = (frames / (long)format.getFrameRate());
-			System.out.println(durationInSeconds);
 			setAllButtonsDisabled(true);
 			PauseTransition pause = new PauseTransition(Duration.seconds(durationInSeconds));
 			pause.setOnFinished(event -> setAllButtonsDisabled(false));
@@ -288,7 +283,6 @@ public class practiceController implements Initializable {
 		if (selectedArchive == null) {
 			noFileAlert();
 		} else {
-			showListeningStage();
 			playArcButton.setDisable(true);
 			deleteArcButton.setDisable(true);
 
@@ -315,7 +309,6 @@ public class practiceController implements Initializable {
 				public void handle(WorkerStateEvent event) {
 					playArcButton.setDisable(false);
 					deleteArcButton.setDisable(false);
-					listeningStage.close();
 				}
 			});
 		}
@@ -354,7 +347,7 @@ public class practiceController implements Initializable {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
-		
+
 		setAllButtonsDisabled(true);
 		// Time 5 seconds and set progress bar accordingly
 		new Thread() {
@@ -384,7 +377,7 @@ public class practiceController implements Initializable {
 		alert.setContentText("No file selected");
 		alert.showAndWait();
 	}
-	
+
 
 	// Taken from https://stackoverflow.com/questions/15870666/calculating-microphone-volume-trying-to-find-max
 	protected static int calculateRMSLevel(byte[] audioData) {
@@ -404,21 +397,6 @@ public class practiceController implements Initializable {
 	}
 
 
-
-	public void showListeningStage() {
-		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/namesayer/listeningWindow.fxml"));
-			Parent root = fxmlLoader.load();
-			listeningStage = new Stage();
-			listeningStage.setTitle("Please wait");
-			listeningStage.setScene(new Scene(root, 200, 100));
-			listeningStage.show();
-		} catch (IOException e) {
-
-		}
-	}
-
-	
 	public void getCurrentName() {
 		for (NameFile n : nameDatabase) {
 			if (n.toString().equals(selectedName)) {
@@ -426,7 +404,7 @@ public class practiceController implements Initializable {
 			}
 		}
 	}
-	
+
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
@@ -440,7 +418,7 @@ public class practiceController implements Initializable {
 			}
 		}
 	}
-	
+
 
 	public void initialiseListOfAttempts() {
 		listOfAttempts = new ArrayList<String>(Arrays.asList(creations.list()));
@@ -450,11 +428,10 @@ public class practiceController implements Initializable {
 	public void handleRateAction(ActionEvent actionEvent) {
 		Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Change " + selectedName + "'s rating?", ButtonType.YES, ButtonType.NO);
 		rateConfirm.showAndWait();
-		
+
 		if (rateConfirm.getResult() == ButtonType.YES) {
-			System.out.println(currentName.getFileName());
 			toPlay = currentName.getFileName();
-			
+
 			if(!currentName.checkIfBadRating()) {
 				currentName.setBadRating(true);
 			} else {
@@ -462,7 +439,7 @@ public class practiceController implements Initializable {
 			}
 			setRatingButton();
 		}
-		
+
 	}
 
 
@@ -486,7 +463,9 @@ public class practiceController implements Initializable {
 
 
 	public void returnToMain() {
-		returnButton.getScene().getWindow().hide();
+		closePractice = true;
+		Controller ctrl = new Controller();
+		returnButton.getScene().setRoot(ctrl.getControllerRoot());
 	}
 
 
