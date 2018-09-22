@@ -33,9 +33,9 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
 	private List<String> listOfNamesNotSelected;
-	private static List<String> listOfNamesSelected;
+	private static List<String> listOfNamesSelected = new ArrayList<String>();
 	private static List<NameFile> namesListArray = new ArrayList<NameFile>();
-	
+
 	private String fileSelectedFromDatabase;
 	private String fileSelectedFromSelected;
 
@@ -50,7 +50,7 @@ public class Controller implements Initializable {
 	private Button addButton;
 	@FXML
 	private Button addAllButton;
-	
+
 	@FXML
 	private Button removeButton;
 	@FXML
@@ -66,12 +66,14 @@ public class Controller implements Initializable {
 	private final Tooltip namesListTooltip = new Tooltip("Double-click to add to chosen names");
 	private final Tooltip selectedListTooltip = new Tooltip("Double-click to remove from chosen names");
 
+	private final ListViewHandler lvHandler = new ListViewHandler();
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		listOfNamesSelected = new ArrayList<>();
 		initialiseListNotSelected();
-		updateListNotSelected();
+		lvHandler.updateList(namesListView, listOfNamesNotSelected);
 		hackTooltipStartTiming(namesListTooltip);
 		namesListView.setTooltip(namesListTooltip);
 		selectedListView.setTooltip(selectedListTooltip);
@@ -102,31 +104,29 @@ public class Controller implements Initializable {
 	//Initialises the database list
 	public void initialiseListNotSelected() {
 		listOfNamesNotSelected = new ArrayList<>();
-		
+
 		File nameFolder = new File("names");
 		List<String> listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
 
 		for (String currentFile : listOfNamesInDatabase) {
-			System.out.println(currentFile);
 			String justName = currentFile.substring((currentFile.lastIndexOf("_")+1), currentFile.lastIndexOf("."));
 			String listName = justName;
 			int attempt = 0;
-			
+
 			// Handle duplicate names by numbering them
 			while (listOfNamesNotSelected.contains(listName)) {
 				attempt++;
 				listName = justName + "_" + attempt;
 			}
 			listOfNamesNotSelected.add(listName);
-			
+
 			NameFile name = new NameFile(currentFile, listName);
 			if(name.checkIfBadRating()) {
 				name.setBadRatingField(true);
 			}
 			namesListArray.add(name);
 		}
-		
-		System.out.println(listOfNamesNotSelected);
+
 		Collections.sort(listOfNamesNotSelected);
 	}
 
@@ -164,37 +164,34 @@ public class Controller implements Initializable {
 	// Handles what to do when a name from the database is clicked
 	public void handleUnselectedListClicked(MouseEvent mouseEvent) {
 		fileSelectedFromDatabase = namesListView.getSelectionModel().getSelectedItem();
-		System.out.println("LEFT LIST: " + fileSelectedFromDatabase);
 		selectedListView.getSelectionModel().clearSelection();
 
-		if (mouseEvent.getClickCount() == 2) {
+		if (mouseEvent.getClickCount() >= 2) {
 			addToSelected();
 		}
 	}
 
-	
+
 	// Handles what to do when a name from the selected list is clicked
 	public void handleSelectedListClicked(MouseEvent mouseEvent) {
 		fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
-		System.out.println("RIGHT LIST: " + fileSelectedFromSelected);
 		namesListView.getSelectionModel().clearSelection();
 
-		if (mouseEvent.getClickCount() == 2) {
+		if (mouseEvent.getClickCount() >= 2) {
 			removeFromSelected();
 		}
 	}
 
-	
+
 	// Closes the current window
 	public static void closeCurrentStage(Button button) {
 		Stage currentStage = (Stage) button.getScene().getWindow();
 		currentStage.close();
 	}
 
-	
+
 	// Getter method for the list of selected names
 	public static List<String> getSelectedList() {
-		System.out.println(listOfNamesSelected);
 		return listOfNamesSelected;
 	}
 
@@ -204,73 +201,35 @@ public class Controller implements Initializable {
 		isRandom = randomBox.isSelected();
 	}
 
-	
+
 	// Adds a name from the database to the selected list
 	public void addToSelected() {
-		fileSelectedFromDatabase = namesListView.getSelectionModel().getSelectedItem();
-
 		if (fileSelectedFromDatabase != null) {
-			listOfNamesNotSelected.remove(fileSelectedFromDatabase);
-			listOfNamesSelected.add(fileSelectedFromDatabase);
-			Collections.sort(listOfNamesNotSelected);
-			Collections.sort(listOfNamesSelected);
-			updateListNotSelected();
-			updateListSelected();
+			lvHandler.moveName(fileSelectedFromDatabase, listOfNamesNotSelected, listOfNamesSelected);
+			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		}
 	}
-	
-	
+
+
 	// Adds all names from database to the selected list
 	public void addAllToSelected() {
-		listOfNamesSelected.addAll(listOfNamesNotSelected);
-		listOfNamesNotSelected.removeAll(listOfNamesNotSelected);
-		Collections.sort(listOfNamesSelected);
-		updateListNotSelected();
-		updateListSelected();
+		lvHandler.moveWholeList(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+		lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 	}
 
-	
+
 	// Removes a name from the selected list
 	public void removeFromSelected() {
-		fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
-
 		if (fileSelectedFromSelected != null) {
-			listOfNamesSelected.remove(fileSelectedFromSelected);
-			listOfNamesNotSelected.add(fileSelectedFromSelected);
-			Collections.sort(listOfNamesNotSelected);
-			Collections.sort(listOfNamesSelected);
-			updateBothLists();
+			lvHandler.moveName(fileSelectedFromSelected, listOfNamesSelected, listOfNamesNotSelected);
+			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		}
 	}
 	
 	
-	// Removes all names from the selected list
 	public void removeAllFromSelected() {
-		listOfNamesNotSelected.addAll(listOfNamesSelected);
-		listOfNamesSelected.removeAll(listOfNamesSelected);
-		Collections.sort(listOfNamesNotSelected);
-		updateBothLists();
-	}
-	
-	private void updateBothLists() {
-		updateListNotSelected();
-		updateListSelected();
-	}
-
-	
-	// Updates the ListView with names in the database (that are not selected for practicing)
-	private void updateListNotSelected() {
-		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
-		namesListView.setItems(listToView);
-		namesListView.getSelectionModel().clearSelection();
-	}
-	
-	
-	// Updates the ListView with names selected for practicing
-	private void updateListSelected() {
-		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesSelected);
-		selectedListView.setItems(listToView);
-		selectedListView.getSelectionModel().clearSelection();
+		lvHandler.moveWholeList(selectedListView, listOfNamesSelected, namesListView, listOfNamesNotSelected);
+		lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 	}
 
 
