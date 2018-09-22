@@ -35,7 +35,7 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <Button fx:id="rateButton" layoutX="87.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleRateAction" prefHeight="25.0" prefWidth="108.0" text="BAD" />
+                  <Button fx:id="rateButton" layoutX="115.0" layoutY="5.0" mnemonicParsing="false" onAction="#handleRateAction" prefHeight="25.0" prefWidth="80.0" text="rate" />
                </children>
             </Pane>
             <Pane maxHeight="300.0" maxWidth="200.0" minHeight="291.0" minWidth="200.0" prefHeight="291.0" prefWidth="200.0">

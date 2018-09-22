@@ -13,19 +13,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;import java.util.*;
-import java.util.stream.Stream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -459,24 +468,16 @@ public class practiceController implements Initializable {
 	private void setRatingButton() {
 		if (currentName.checkIfBadRating()) {
 			rateButton.setText("Rate Good");
+			rateButton.setStyle("-fx-background-color: red;");
 		} else {
 			rateButton.setText("Rate Bad");
-		}
-	}
-
-
-	public void checkRate() {
-		if (currentName.getRating()) {
-			rateButton.setDisable(true);
-		} else {
-			rateButton.setDisable(false);
+			rateButton.setStyle("-fx-background-color: green;");
 		}
 	}
 
 
 	public void newNameSelected() {
 		getCurrentName();
-		checkRate();
 		initialiseListOfAttempts();
 		fillAttemptList();
 		updateArchive();

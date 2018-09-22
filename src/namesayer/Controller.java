@@ -14,17 +14,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
-
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -38,14 +33,10 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
 	private List<String> listOfNamesNotSelected;
-	private List<String> listOfNamesInDatabase;
 	private static List<String> listOfNamesSelected;
-	private List<String> listOfArchive;
 	private static List<NameFile> namesListArray = new ArrayList<NameFile>();
-
-
-
-	private String fileSelected;
+	
+	private String fileSelectedFromDatabase;
 	private String fileSelectedFromSelected;
 
 	Stage practiceStage = new Stage();
@@ -72,11 +63,6 @@ public class Controller implements Initializable {
 	private CheckBox randomBox = new CheckBox();
 	private boolean isRandom = randomBox.isSelected();
 
-	@FXML
-	private ListView<String> archiveListView = new ListView<String>();
-
-
-
 	private final Tooltip namesListTooltip = new Tooltip("Double-click to add to chosen names");
 	private final Tooltip selectedListTooltip = new Tooltip("Double-click to remove from chosen names");
 
@@ -86,7 +72,6 @@ public class Controller implements Initializable {
 		listOfNamesSelected = new ArrayList<>();
 		initialiseListNotSelected();
 		updateListNotSelected();
-		initialiseArchive();
 		hackTooltipStartTiming(namesListTooltip);
 		namesListView.setTooltip(namesListTooltip);
 		selectedListView.setTooltip(selectedListTooltip);
@@ -119,7 +104,7 @@ public class Controller implements Initializable {
 		listOfNamesNotSelected = new ArrayList<>();
 		
 		File nameFolder = new File("names");
-		listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
+		List<String> listOfNamesInDatabase = new ArrayList<String>(Arrays.asList(nameFolder.list()));
 
 		for (String currentFile : listOfNamesInDatabase) {
 			System.out.println(currentFile);
@@ -143,23 +128,6 @@ public class Controller implements Initializable {
 		
 		System.out.println(listOfNamesNotSelected);
 		Collections.sort(listOfNamesNotSelected);
-	}
-
-	//Initialises the archive list and adds to listview
-	public void initialiseArchive() {
-		File archiveFolder = new File(System.getProperty("user.dir"));
-		listOfArchive = new ArrayList<String>(Arrays.asList(archiveFolder.list()));
-		ObservableList<String> archiveToView = FXCollections.observableArrayList(listOfArchive);
-		archiveListView.setItems(archiveToView);
-		archiveListView.getSelectionModel().clearSelection();
-	}
-
-
-	// Called when program is launched to fill the ListView with files
-	public void updateListNotSelected() {
-		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
-		namesListView.setItems(listToView);
-		namesListView.getSelectionModel().clearSelection();
 	}
 
 
@@ -186,18 +154,17 @@ public class Controller implements Initializable {
 				practiceStage.show();
 			} catch (IOException e) {
 				e.printStackTrace();
-				System.out.println("shit happened");
+				System.out.println("Failed to open practice menu");
 			}
 
-			//closeCurrentStage(practiceButton);
 		}
 	}
 
 
-	//Handles what to do when a name from the database is clicked
+	// Handles what to do when a name from the database is clicked
 	public void handleUnselectedListClicked(MouseEvent mouseEvent) {
-		fileSelected = namesListView.getSelectionModel().getSelectedItem();
-		System.out.println("LEFT LIST: " + fileSelected);
+		fileSelectedFromDatabase = namesListView.getSelectionModel().getSelectedItem();
+		System.out.println("LEFT LIST: " + fileSelectedFromDatabase);
 		selectedListView.getSelectionModel().clearSelection();
 
 		if (mouseEvent.getClickCount() == 2) {
@@ -206,7 +173,7 @@ public class Controller implements Initializable {
 	}
 
 	
-	//Handles what to do when a name from the selected list is clicked
+	// Handles what to do when a name from the selected list is clicked
 	public void handleSelectedListClicked(MouseEvent mouseEvent) {
 		fileSelectedFromSelected = selectedListView.getSelectionModel().getSelectedItem();
 		System.out.println("RIGHT LIST: " + fileSelectedFromSelected);
@@ -218,14 +185,14 @@ public class Controller implements Initializable {
 	}
 
 	
-	//Closes the current window
+	// Closes the current window
 	public static void closeCurrentStage(Button button) {
 		Stage currentStage = (Stage) button.getScene().getWindow();
 		currentStage.close();
 	}
 
 	
-	//Getter method for the list of selected names
+	// Getter method for the list of selected names
 	public static List<String> getSelectedList() {
 		System.out.println(listOfNamesSelected);
 		return listOfNamesSelected;
@@ -240,11 +207,11 @@ public class Controller implements Initializable {
 	
 	// Adds a name from the database to the selected list
 	public void addToSelected() {
-		fileSelected = namesListView.getSelectionModel().getSelectedItem();
+		fileSelectedFromDatabase = namesListView.getSelectionModel().getSelectedItem();
 
-		if (fileSelected != null) {
-			listOfNamesNotSelected.remove(fileSelected);
-			listOfNamesSelected.add(fileSelected);
+		if (fileSelectedFromDatabase != null) {
+			listOfNamesNotSelected.remove(fileSelectedFromDatabase);
+			listOfNamesSelected.add(fileSelectedFromDatabase);
 			Collections.sort(listOfNamesNotSelected);
 			Collections.sort(listOfNamesSelected);
 			updateListNotSelected();
@@ -272,8 +239,7 @@ public class Controller implements Initializable {
 			listOfNamesNotSelected.add(fileSelectedFromSelected);
 			Collections.sort(listOfNamesNotSelected);
 			Collections.sort(listOfNamesSelected);
-			updateListNotSelected();
-			updateListSelected();
+			updateBothLists();
 		}
 	}
 	
@@ -283,13 +249,25 @@ public class Controller implements Initializable {
 		listOfNamesNotSelected.addAll(listOfNamesSelected);
 		listOfNamesSelected.removeAll(listOfNamesSelected);
 		Collections.sort(listOfNamesNotSelected);
+		updateBothLists();
+	}
+	
+	private void updateBothLists() {
 		updateListNotSelected();
 		updateListSelected();
 	}
 
 	
-	// Updates the Listview with names selected for practicing
-	public void updateListSelected() {
+	// Updates the ListView with names in the database (that are not selected for practicing)
+	private void updateListNotSelected() {
+		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesNotSelected);
+		namesListView.setItems(listToView);
+		namesListView.getSelectionModel().clearSelection();
+	}
+	
+	
+	// Updates the ListView with names selected for practicing
+	private void updateListSelected() {
 		ObservableList<String> listToView = FXCollections.observableArrayList(listOfNamesSelected);
 		selectedListView.setItems(listToView);
 		selectedListView.getSelectionModel().clearSelection();
