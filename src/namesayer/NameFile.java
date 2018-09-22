@@ -27,10 +27,11 @@ public class NameFile {
 		_listName = new SimpleStringProperty(listName);
 	}
 
-	
+
 	public String getName() {
+		int first = _fileName.get().indexOf("_") + 1;
 		int point = _fileName.get().lastIndexOf("_");
-		return (_fileName.get().substring(0, point)) + (_listName.get());
+		return (_fileName.get().substring(first, point)) + (_listName.get());
 	}
 
 	

@@ -109,7 +109,7 @@ public class practiceController implements Initializable {
 
 	private List<String> listOfAttempts;
 
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy_HHmmss");
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy-HHmmss");
 	private Date date;
 
 	private boolean closePractice = false;
@@ -126,7 +126,6 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-		setRatingButton();
 
 		// Show microphone level on a ProgressBar
 		new Thread() {
@@ -179,7 +178,7 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-		setRatingButton();
+
 	}
 
 
@@ -196,7 +195,7 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-		setRatingButton();
+
 
 	}
 
@@ -328,7 +327,7 @@ public class practiceController implements Initializable {
 		date = new Date();
 		String currentDate = formatter.format(date);
 
-		String recordingName = currentDate + "_" + selectedName;
+		String recordingName = currentName.getName() + " " + currentDate;
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
@@ -410,11 +409,11 @@ public class practiceController implements Initializable {
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
-			int place = s.lastIndexOf("_") + 1;
+			int place = s.lastIndexOf(" ");
 			int place2 = s.lastIndexOf(".");
-			String nameMatch = s.substring(place, place2);
+			String nameMatch = s.substring(0, place);
 
-			if (currentName.toString().equals(nameMatch)) {
+			if (currentName.getName().equals(nameMatch)) {
 				String toAddtoList = s.substring(0, place2);
 				currentName.addAttempt(toAddtoList);
 			}
@@ -461,6 +460,7 @@ public class practiceController implements Initializable {
 		initialiseListOfAttempts();
 		fillAttemptList();
 		updateArchive();
+		setRatingButton();
 	}
 
 
