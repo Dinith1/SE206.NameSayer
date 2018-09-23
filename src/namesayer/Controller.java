@@ -62,9 +62,9 @@ public class Controller implements Initializable {
 
 	private final ListViewHandler lvHandler = new ListViewHandler();
 	private final TooltipHandler ttHandler = new TooltipHandler();
-	
+
 	private static Parent controllerRoot;
-	
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -130,7 +130,7 @@ public class Controller implements Initializable {
 				e.printStackTrace();
 				System.out.println("Failed to open practice menu");
 			}
-			
+
 		}
 	}
 
@@ -182,7 +182,7 @@ public class Controller implements Initializable {
 			lvHandler.moveName(fileSelectedFromDatabase, listOfNamesNotSelected, listOfNamesSelected);
 			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		}
-		
+
 		// This is here to allow changing of scenes in the same window
 		controllerRoot = addButton.getScene().getRoot();
 	}
@@ -192,6 +192,9 @@ public class Controller implements Initializable {
 	public void addAllToSelected() {
 		lvHandler.moveWholeList(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+
+		// This is here to allow changing of scenes in the same window
+		controllerRoot = addButton.getScene().getRoot();
 	}
 
 
@@ -213,11 +216,11 @@ public class Controller implements Initializable {
 	public static List<NameFile> getAddedNames() {
 		return namesListArray;
 	}
-	
-	
+
+
 	public Parent getControllerRoot() {
 		return controllerRoot;
 	}
-	
+
 
 }

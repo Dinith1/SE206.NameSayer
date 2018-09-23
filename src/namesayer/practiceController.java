@@ -42,6 +42,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 
 
@@ -186,7 +187,6 @@ public class practiceController implements Initializable {
 		if (selectedIndex == listToPlay.size() - 1) {
 			displayListView.scrollTo(selectedIndex);
 			displayListView.getSelectionModel().selectLast();
-
 		} else {
 			selectedIndex++;
 			displayListView.scrollTo(selectedIndex);
@@ -195,48 +195,13 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-
-
 	}
 
 
 	public void handlePlayButton(ActionEvent actionEvent) {
 		toPlay = currentName.getFileName();
-
-		// Taken from https://stackoverflow.com/questions/2416935/how-to-play-wav-files-with-java
-		try {
-			File yourFile = new File("names/" + toPlay);
-			AudioInputStream stream = AudioSystem.getAudioInputStream(yourFile);
-			AudioFormat format = stream.getFormat();
-			DataLine.Info info = new DataLine.Info(Clip.class, format);
-			Clip clip = (Clip) AudioSystem.getLine(info);
-			clip.open(stream);
-			clip.start();
-			// Disable buttons while audio file plays
-			long frames = stream.getFrameLength();
-			long durationInSeconds = (frames / (long)format.getFrameRate());
-			setAllButtonsDisabled(true);
-			PauseTransition pause = new PauseTransition(Duration.seconds(durationInSeconds));
-			pause.setOnFinished(event -> setAllButtonsDisabled(false));
-			pause.play();
-		}
-		catch (Exception e) {
-			System.out.println("FAILED TO PLAY FILE");
-		}
-
-
+		playAudio("names/" + toPlay);
 	}
-
-
-	private void setAllButtonsDisabled(boolean b) {
-		playButton.setDisable(b);
-		prevButton.setDisable(b);
-		nextButton.setDisable(b);
-		recordButton.setDisable(b);
-		playArcButton.setDisable(b);
-		deleteArcButton.setDisable(b);
-	}
-
 
 
 	public void handleArcListClicked(MouseEvent mouseEvent) {
@@ -245,8 +210,63 @@ public class practiceController implements Initializable {
 	}
 
 
-	public void handleDeleteArc(ActionEvent actionEvent) {
+	public void handlePlayArc(ActionEvent actionEvent) {
+		if (selectedArchive == null) {
+			noFileAlert();
+		} else {
+			playAudio("Creations/" + selectedArchive + ".wav");
+		}
+	}
+	
+	
+	private void playAudio(String fileToPlay) {
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					AudioInputStream stream = AudioSystem.getAudioInputStream(new File(fileToPlay));
+					AudioFormat format = stream.getFormat();
+					DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+					SourceDataLine sourceLine = (SourceDataLine) AudioSystem.getLine(info);
+					sourceLine.open(format);
+					sourceLine.start();
+					
+					// Disable buttons while audio file plays
+					long frames = stream.getFrameLength();
+					long durationInSeconds = (frames / (long)format.getFrameRate());
+					setAllButtonsDisabled(true);
+					PauseTransition pause = new PauseTransition(Duration.seconds(durationInSeconds));
+					pause.setOnFinished(event -> {
+						setAllButtonsDisabled(false);
+						Thread.currentThread().interrupt();
+					});
+					pause.play();
 
+					int nBytesRead = 0;
+					int BUFFER_SIZE = 128000;
+					byte[] abData = new byte[BUFFER_SIZE];
+					while (nBytesRead != -1) {
+						try {
+							nBytesRead = stream.read(abData, 0, abData.length);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						if (nBytesRead >= 0) {
+							@SuppressWarnings("unused")
+							int nBytesWritten = sourceLine.write(abData, 0, nBytesRead);
+						}
+					}
+					sourceLine.drain();
+					sourceLine.close();
+				} catch (Exception e) {
+					System.out.println("FAILED TO PLAY FILE");
+				}
+			}
+		}.start();
+	}
+
+
+	public void handleDeleteArc(ActionEvent actionEvent) {
 		if (selectedArchive == null) {
 			noFileAlert();
 		} else {
@@ -276,50 +296,6 @@ public class practiceController implements Initializable {
 				}
 			}
 		}
-	}
-
-	public void handlePlayArc(ActionEvent actionEvent) {
-		if (selectedArchive == null) {
-			noFileAlert();
-		} else {
-			try {
-				File yourFile = new File("Creations/" + selectedArchive + ".wav");
-				AudioInputStream stream = AudioSystem.getAudioInputStream(yourFile);
-				AudioFormat format = stream.getFormat();
-				DataLine.Info info = new DataLine.Info(Clip.class, format);
-				Clip clip = (Clip) AudioSystem.getLine(info);
-				clip.open(stream);
-				clip.start();
-				// Disable buttons while audio file plays
-				long frames = stream.getFrameLength();
-				long durationInSeconds = (frames / (long)format.getFrameRate());
-				setAllButtonsDisabled(true);
-				PauseTransition pause = new PauseTransition(Duration.seconds(durationInSeconds));
-				pause.setOnFinished(event -> setAllButtonsDisabled(false));
-				pause.play();
-			}
-			catch (Exception e) {
-				System.out.println("FAILED TO PLAY FILE");
-			}
-		}
-	}
-
-
-	// Update attempts list
-	public void updateArchive() {
-		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
-		if (recordedList.size() == 0) {
-			contains = false;
-			availableListView.setMouseTransparent(true);
-			availableListView.setFocusTraversable(false);
-
-		} else {
-			contains = true;
-			availableListView.setMouseTransparent(false);
-			availableListView.setFocusTraversable(true);
-		}
-		availableListView.setItems(recordedList);
-		availableListView.getSelectionModel().clearSelection();
 	}
 
 
@@ -364,7 +340,7 @@ public class practiceController implements Initializable {
 					}
 				},
 				5000
-		);
+				);
 
 		currentName.addAttempt(recordingName);
 		updateArchive();
@@ -398,34 +374,6 @@ public class practiceController implements Initializable {
 	}
 
 
-	public void getCurrentName() {
-		for (NameFile n : nameDatabase) {
-			if (n.toString().equals(selectedName)) {
-				currentName = n;
-			}
-		}
-	}
-
-
-	public void fillAttemptList() {
-		for (String s : listOfAttempts) {
-			int place = s.lastIndexOf(" ");
-			int place2 = s.lastIndexOf(".");
-			String nameMatch = s.substring(0, place);
-
-			if (currentName.getName().equals(nameMatch)) {
-				String toAddtoList = s.substring(0, place2);
-				currentName.addAttempt(toAddtoList);
-			}
-		}
-	}
-
-
-	public void initialiseListOfAttempts() {
-		listOfAttempts = new ArrayList<String>(Arrays.asList(creations.list()));
-	}
-
-
 	public void handleRateAction(ActionEvent actionEvent) {
 		Alert rateConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Change " + selectedName + "'s rating?", ButtonType.YES, ButtonType.NO);
 		rateConfirm.showAndWait();
@@ -440,18 +388,6 @@ public class practiceController implements Initializable {
 			}
 			setRatingButton();
 		}
-
-	}
-
-
-	private void setRatingButton() {
-		if (currentName.checkIfBadRating()) {
-			rateButton.setText("Rate Good");
-			rateButton.setStyle("-fx-background-color: red;");
-		} else {
-			rateButton.setText("Rate Bad");
-			rateButton.setStyle("-fx-background-color: green;");
-		}
 	}
 
 
@@ -462,6 +398,73 @@ public class practiceController implements Initializable {
 		updateArchive();
 		setRatingButton();
 	}
+	
+	
+	public void getCurrentName() {
+		for (NameFile n : nameDatabase) {
+			if (n.toString().equals(selectedName)) {
+				currentName = n;
+			}
+		}
+	}
+	
+	
+	public void initialiseListOfAttempts() {
+		listOfAttempts = new ArrayList<String>(Arrays.asList(creations.list()));
+	}
+
+	
+	public void fillAttemptList() {
+		for (String s : listOfAttempts) {
+			int place = s.lastIndexOf(" ");
+			int place2 = s.lastIndexOf(".");
+			String nameMatch = s.substring(0, place);
+
+			if (currentName.getName().equals(nameMatch)) {
+				String toAddtoList = s.substring(0, place2);
+				currentName.addAttempt(toAddtoList);
+			}
+		}
+	}
+	
+	
+	// Update attempts list
+	public void updateArchive() {
+		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
+		if (recordedList.size() == 0) {
+			contains = false;
+			availableListView.setMouseTransparent(true);
+			availableListView.setFocusTraversable(false);
+
+		} else {
+			contains = true;
+			availableListView.setMouseTransparent(false);
+			availableListView.setFocusTraversable(true);
+		}
+		availableListView.setItems(recordedList);
+		availableListView.getSelectionModel().clearSelection();
+	}
+	
+	
+	private void setRatingButton() {
+		if (currentName.checkIfBadRating()) {
+			rateButton.setText("Rate Good");
+			rateButton.setStyle("-fx-background-color: red;");
+		} else {
+			rateButton.setText("Rate Bad");
+			rateButton.setStyle("-fx-background-color: green;");
+		}
+	}
+
+	
+	private void setAllButtonsDisabled(boolean b) {
+		playButton.setDisable(b);
+		prevButton.setDisable(b);
+		nextButton.setDisable(b);
+		recordButton.setDisable(b);
+		playArcButton.setDisable(b);
+		deleteArcButton.setDisable(b);
+	}
 
 
 	public void returnToMain() {
@@ -470,7 +473,6 @@ public class practiceController implements Initializable {
 		returnButton.getScene().setRoot(ctrl.getControllerRoot());
 	}
 
-
-
+	
 }
 
