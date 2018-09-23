@@ -107,11 +107,7 @@ public class practiceController implements Initializable {
 
 	private NameFile currentName;
 
-
 	private List<String> listOfAttempts;
-
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy-HHmmss");
-	private Date date;
 
 	private boolean closePractice = false;
 
@@ -213,7 +209,9 @@ public class practiceController implements Initializable {
 		if (selectedArchive == null) {
 			noFileAlert();
 		} else {
-			playAudio("Creations/" + selectedArchive + ".wav");
+			toPlay = currentName.getFileName();
+			String fileToPlay = toPlay.substring(0, toPlay.lastIndexOf("_")+1) + selectedArchive;
+			playAudio("Creations/" + fileToPlay + ".wav");
 		}
 	}
 
@@ -259,6 +257,7 @@ public class practiceController implements Initializable {
 					sourceLine.close();
 				} catch (Exception e) {
 					System.out.println("FAILED TO PLAY FILE");
+					e.printStackTrace();
 				}
 			}
 		}.start();
@@ -269,8 +268,9 @@ public class practiceController implements Initializable {
 		if (selectedArchive == null) {
 			noFileAlert();
 		} else {
-
-			String fileString = "./Creations/" + selectedArchive + ".wav";
+			toPlay = currentName.getFileName();
+			String fileToDelete = toPlay.substring(0, toPlay.lastIndexOf("_")+1) + selectedArchive;
+			String fileString = "./Creations/" + fileToDelete + ".wav";
 			File toDelete = new File(fileString);
 			if (toDelete.exists()) {
 
@@ -281,12 +281,15 @@ public class practiceController implements Initializable {
 					try {
 						Files.deleteIfExists(toDelete.toPath());
 					} catch (IOException e) {
+						System.out.println("FAILED TO DELETE");
+						e.printStackTrace();
 					}
-
-					currentName.deleteAttempt(selectedArchive);
+					
+					// ***************************************************** SOMETHING WRONG WITH THIS I THINK
+					// ***************************************************** LIST NOT UPDATING WHEN YOU DELETE
+					currentName.deleteAttempt(fileToDelete);
 					updateArchive();
 					availableListView.getSelectionModel().clearSelection();
-
 				}
 			} else {
 				if (!contains) {
@@ -295,14 +298,12 @@ public class practiceController implements Initializable {
 				}
 			}
 		}
+		updateArchive();
 	}
 
 
 	public void handleRecordAction(ActionEvent actionEvent) {
-		date = new Date();
-		String currentDate = formatter.format(date);
-
-		String recordingName = currentName.getFileNameWithoutWAV() + "_attempt" + (recordedList.size()+1);
+		String recordingName = currentName.getFileNameWithoutWAV() + "-attempt" + (recordedList.size()+1);
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
@@ -415,12 +416,9 @@ public class practiceController implements Initializable {
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
-			String nameMatch = s.substring(0, s.lastIndexOf("_"));
-			//nameMatch = s.substring(0, nameMatch.lastIndexOf("_"));
-			if (currentName.getFileName().equals(nameMatch+".wav")) {
-				String onlyName = nameMatch.substring(nameMatch.lastIndexOf("_")+1, nameMatch.length());
+			String nameMatch = s.substring(0, s.lastIndexOf("-"));
+			if (currentName.getFileNameWithoutWAV().equals(nameMatch)) {
 				String toAddToList = s.substring(0, s.lastIndexOf("."));
-				toAddToList = toAddToList.substring(toAddToList.lastIndexOf(onlyName));
 				if (!currentName.getAttemptList().contains(toAddToList)) {
 					currentName.addAttempt(toAddToList);
 				}
@@ -431,7 +429,7 @@ public class practiceController implements Initializable {
 
 	// Update attempts list
 	public void updateArchive() {
-		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
+		recordedList = FXCollections.observableArrayList(currentName.getAttemptListNameOnly());
 		if (recordedList.size() == 0) {
 			contains = false;
 			availableListView.setMouseTransparent(true);

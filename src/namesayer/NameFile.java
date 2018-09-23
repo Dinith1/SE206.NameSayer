@@ -19,7 +19,8 @@ public class NameFile {
 	private SimpleStringProperty _fileName;
 	private SimpleStringProperty _listName;
 	private boolean _rating = false;
-	private List<String> attemptList = new ArrayList<>();
+	private List<String> attemptList = new ArrayList<String>();
+	private List<String> attemptListNameOnly = new ArrayList<String>();
 
 	
 	public NameFile(String fileName, String listName) {
@@ -136,6 +137,7 @@ public class NameFile {
 	
 	public void addAttempt(String attemptFileName) {
 		attemptList.add(attemptFileName);
+		attemptListNameOnly.add(attemptFileName.substring(attemptFileName.lastIndexOf("_")+1, attemptFileName.length()));
 	}
 
 	
@@ -146,9 +148,18 @@ public class NameFile {
 		return attemptList;
 	}
 	
+	
+	public List<String> getAttemptListNameOnly() {
+		if(!attemptListNameOnly.isEmpty()) {
+			Collections.sort(attemptListNameOnly);
+		}
+		return attemptListNameOnly;
+	}
+	
 
 	public void deleteAttempt(String attemptFileName) {
 		attemptList.remove(attemptFileName);
+		attemptListNameOnly.remove(attemptFileName.substring(attemptFileName.lastIndexOf("_")+2, attemptFileName.length()));
 	}
 
 	
