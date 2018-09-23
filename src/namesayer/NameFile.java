@@ -38,6 +38,11 @@ public class NameFile {
 	public String getFileName() {
 		return _fileName.get();
 	}
+	
+	
+	public String getFileNameWithoutWAV() {
+		return _fileName.get().substring(0, _fileName.get().length()-4);
+	}
 
 	
 	public boolean getRating() {

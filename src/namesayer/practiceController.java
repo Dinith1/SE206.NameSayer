@@ -179,7 +179,6 @@ public class practiceController implements Initializable {
 		selectedName = displayListView.getSelectionModel().getSelectedItem();
 		playingLabel.setText(selectedName);
 		newNameSelected();
-
 	}
 
 
@@ -271,8 +270,8 @@ public class practiceController implements Initializable {
 			noFileAlert();
 		} else {
 
-			String fileString = "./Creations/" + selectedArchive;
-			File toDelete = new File(fileString + ".wav");
+			String fileString = "./Creations/" + selectedArchive + ".wav";
+			File toDelete = new File(fileString);
 			if (toDelete.exists()) {
 
 				Alert deleteConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete:" + selectedArchive + "?", ButtonType.YES, ButtonType.NO);
@@ -303,7 +302,7 @@ public class practiceController implements Initializable {
 		date = new Date();
 		String currentDate = formatter.format(date);
 
-		String recordingName = currentName.getName() + " " + currentDate;
+		String recordingName = currentName.getFileNameWithoutWAV() + "_attempt" + (recordedList.size()+1);
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
@@ -416,14 +415,14 @@ public class practiceController implements Initializable {
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
-			int place = s.lastIndexOf(" ");
-			int place2 = s.lastIndexOf(".");
-			String nameMatch = s.substring(0, place);
-
-			if (currentName.getName().equals(nameMatch)) {
-				String toAddtoList = s.substring(0, place2);
-				if (!currentName.getAttemptList().contains(toAddtoList)) {
-					currentName.addAttempt(toAddtoList);
+			String nameMatch = s.substring(0, s.lastIndexOf("_"));
+			//nameMatch = s.substring(0, nameMatch.lastIndexOf("_"));
+			if (currentName.getFileName().equals(nameMatch+".wav")) {
+				String onlyName = nameMatch.substring(nameMatch.lastIndexOf("_")+1, nameMatch.length());
+				String toAddToList = s.substring(0, s.lastIndexOf("."));
+				toAddToList = toAddToList.substring(toAddToList.lastIndexOf(onlyName));
+				if (!currentName.getAttemptList().contains(toAddToList)) {
+					currentName.addAttempt(toAddToList);
 				}
 			}
 		}
@@ -437,7 +436,6 @@ public class practiceController implements Initializable {
 			contains = false;
 			availableListView.setMouseTransparent(true);
 			availableListView.setFocusTraversable(false);
-
 		} else {
 			contains = true;
 			availableListView.setMouseTransparent(false);
