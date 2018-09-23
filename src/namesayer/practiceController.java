@@ -110,6 +110,9 @@ public class practiceController implements Initializable {
 	private List<String> listOfAttempts;
 
 	private boolean closePractice = false;
+	
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy-HHmmss");
+	private Date date;
 
 
 	@Override
@@ -270,10 +273,9 @@ public class practiceController implements Initializable {
 		} else {
 			toPlay = currentName.getFileName();
 			String fileToDelete = toPlay.substring(0, toPlay.lastIndexOf("_")+1) + selectedArchive;
-			String fileString = "./Creations/" + fileToDelete + ".wav";
+			String fileString = "Creations/" + fileToDelete + ".wav";
 			File toDelete = new File(fileString);
 			if (toDelete.exists()) {
-
 				Alert deleteConfirm = new Alert(Alert.AlertType.CONFIRMATION, "Delete:" + selectedArchive + "?", ButtonType.YES, ButtonType.NO);
 				deleteConfirm.showAndWait();
 				if (deleteConfirm.getResult() == ButtonType.YES) {
@@ -285,8 +287,6 @@ public class practiceController implements Initializable {
 						e.printStackTrace();
 					}
 					
-					// ***************************************************** SOMETHING WRONG WITH THIS I THINK
-					// ***************************************************** LIST NOT UPDATING WHEN YOU DELETE
 					currentName.deleteAttempt(fileToDelete);
 					updateArchive();
 					availableListView.getSelectionModel().clearSelection();
@@ -303,7 +303,9 @@ public class practiceController implements Initializable {
 
 
 	public void handleRecordAction(ActionEvent actionEvent) {
-		String recordingName = currentName.getFileNameWithoutWAV() + "-attempt" + (recordedList.size()+1);
+		date = new Date();
+		String currentDate = formatter.format(date);
+		String recordingName = currentName.getFileNameWithoutWAV() + currentDate;
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);

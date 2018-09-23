@@ -160,6 +160,7 @@ public class NameFile {
 	public void deleteAttempt(String attemptFileName) {
 		attemptList.remove(attemptFileName);
 		attemptListNameOnly.remove(attemptFileName.substring(attemptFileName.lastIndexOf("_")+2, attemptFileName.length()));
+		System.out.println("DELETING :: : : :: " + attemptFileName.substring(attemptFileName.lastIndexOf("_")+2, attemptFileName.length()));
 	}
 
 	
