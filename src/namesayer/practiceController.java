@@ -217,8 +217,8 @@ public class practiceController implements Initializable {
 			playAudio("Creations/" + selectedArchive + ".wav");
 		}
 	}
-	
-	
+
+
 	private void playAudio(String fileToPlay) {
 		new Thread() {
 			@Override
@@ -230,7 +230,7 @@ public class practiceController implements Initializable {
 					SourceDataLine sourceLine = (SourceDataLine) AudioSystem.getLine(info);
 					sourceLine.open(format);
 					sourceLine.start();
-					
+
 					// Disable buttons while audio file plays
 					long frames = stream.getFrameLength();
 					long durationInSeconds = (frames / (long)format.getFrameRate());
@@ -398,8 +398,8 @@ public class practiceController implements Initializable {
 		updateArchive();
 		setRatingButton();
 	}
-	
-	
+
+
 	public void getCurrentName() {
 		for (NameFile n : nameDatabase) {
 			if (n.toString().equals(selectedName)) {
@@ -407,13 +407,13 @@ public class practiceController implements Initializable {
 			}
 		}
 	}
-	
-	
+
+
 	public void initialiseListOfAttempts() {
 		listOfAttempts = new ArrayList<String>(Arrays.asList(creations.list()));
 	}
 
-	
+
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
 			int place = s.lastIndexOf(" ");
@@ -422,12 +422,14 @@ public class practiceController implements Initializable {
 
 			if (currentName.getName().equals(nameMatch)) {
 				String toAddtoList = s.substring(0, place2);
-				currentName.addAttempt(toAddtoList);
+				if (!currentName.getAttemptList().contains(toAddtoList)) {
+					currentName.addAttempt(toAddtoList);
+				}
 			}
 		}
 	}
-	
-	
+
+
 	// Update attempts list
 	public void updateArchive() {
 		recordedList = FXCollections.observableArrayList(currentName.getAttemptList());
@@ -444,8 +446,8 @@ public class practiceController implements Initializable {
 		availableListView.setItems(recordedList);
 		availableListView.getSelectionModel().clearSelection();
 	}
-	
-	
+
+
 	private void setRatingButton() {
 		if (currentName.checkIfBadRating()) {
 			rateButton.setText("Rate Good");
@@ -456,7 +458,7 @@ public class practiceController implements Initializable {
 		}
 	}
 
-	
+
 	private void setAllButtonsDisabled(boolean b) {
 		playButton.setDisable(b);
 		prevButton.setDisable(b);
@@ -473,6 +475,6 @@ public class practiceController implements Initializable {
 		returnButton.getScene().setRoot(ctrl.getControllerRoot());
 	}
 
-	
+
 }
 
