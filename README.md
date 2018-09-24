@@ -1,6 +1,5 @@
-=====================================================================
-			NameSayer User Guide
-=====================================================================
+# NameSayer User Guide
+
 * SETUP ~ IMPORTANT
 -------------------
 	1. Make sure the folder/direcotry (database) containing the names is called 'names' ~ EXACTLY AS SPECIFIED.	
