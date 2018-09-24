@@ -30,9 +30,8 @@ public class NameFile {
 
 
 	public String getName() {
-		int first = _fileName.get().indexOf("_") + 1;
 		int point = _fileName.get().lastIndexOf("_");
-		return (_fileName.get().substring(first, point)) + (_listName.get());
+		return (_fileName.get().substring(0, point)) + "_" + (_listName.get());
 	}
 
 	
@@ -45,12 +44,7 @@ public class NameFile {
 		return _fileName.get().substring(0, _fileName.get().length()-4);
 	}
 
-	
-	public boolean getRating() {
-		return _rating;
-	}
-	
-	
+
 	// Checks Bad_Ratings.txt file
 	public boolean checkIfBadRating() {
 		List<String> ratingsList = new ArrayList<String>();
@@ -137,7 +131,7 @@ public class NameFile {
 	
 	public void addAttempt(String attemptFileName) {
 		attemptList.add(attemptFileName);
-		attemptListNameOnly.add(attemptFileName.substring(attemptFileName.lastIndexOf("_")+1, attemptFileName.length()));
+		attemptListNameOnly.add(attemptFileName.substring(attemptFileName.lastIndexOf("_")+1));
 	}
 
 	
@@ -159,8 +153,13 @@ public class NameFile {
 
 	public void deleteAttempt(String attemptFileName) {
 		attemptList.remove(attemptFileName);
+<<<<<<< HEAD
 		attemptListNameOnly.remove(attemptFileName.substring(attemptFileName.lastIndexOf("_")+2, attemptFileName.length()));
 		System.out.println("DELETING :: : : :: " + attemptFileName.substring(attemptFileName.lastIndexOf("_")+2, attemptFileName.length()));
+=======
+		String nameInListNameOnly = attemptFileName.substring(attemptFileName.lastIndexOf("_")+1);
+		attemptListNameOnly.remove(nameInListNameOnly);
+>>>>>>> 943a069bae797a766c77f59f3413754f4a32dd5e
 	}
 
 	

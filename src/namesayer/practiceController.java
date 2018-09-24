@@ -114,6 +114,9 @@ public class practiceController implements Initializable {
 	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy-HHmmss");
 	private Date date;
 
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-HHmmss");
+	private Date date;
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -298,14 +301,19 @@ public class practiceController implements Initializable {
 				}
 			}
 		}
-		updateArchive();
+//		updateArchive();
 	}
 
 
 	public void handleRecordAction(ActionEvent actionEvent) {
 		date = new Date();
+<<<<<<< HEAD
 		String currentDate = formatter.format(date);
 		String recordingName = currentName.getFileNameWithoutWAV() + currentDate;
+=======
+		String currentTime = formatter.format(date);
+		String recordingName = currentName.getName() + " " + currentTime;
+>>>>>>> 943a069bae797a766c77f59f3413754f4a32dd5e
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
@@ -418,7 +426,7 @@ public class practiceController implements Initializable {
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
-			String nameMatch = s.substring(0, s.lastIndexOf("-"));
+			String nameMatch = s.substring(0, s.lastIndexOf(" ") -1);
 			if (currentName.getFileNameWithoutWAV().equals(nameMatch)) {
 				String toAddToList = s.substring(0, s.lastIndexOf("."));
 				if (!currentName.getAttemptList().contains(toAddToList)) {
