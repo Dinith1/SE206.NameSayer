@@ -80,7 +80,7 @@
                <children>
                   <ImageView fitHeight="26.0" fitWidth="19.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../mic_burned.png" />
+                        <Image url="@../mic_burned.png" />
                      </image>
                      <HBox.margin>
                         <Insets top="6.0" />
