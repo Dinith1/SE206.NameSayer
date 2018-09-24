@@ -58,5 +58,5 @@
 ----------------------------------------
 	1. In the practice menu you can click the button above the list on the left to change the rating between good and bad.
 
-	2. Ratings are stored in a file called Bad_ratings.txt, located in the same directory as NameSayer.jar
+	2. Ratings are stored in a file called Bad_ratings.txt, located in the same directory as NameSayer.jar.
 
