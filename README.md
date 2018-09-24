@@ -2,25 +2,15 @@
 
 * SETUP ~ IMPORTANT
 -------------------
-	1. Make sure the folder/direcotry (database) containing the names is called 'names' ~ EXACTLY AS SPECIFIED.	
+	1. Make sure the folder/directory (database) containing the names is called 'names' ~ EXACTLY AS SPECIFIED.	
 	
-	2. Make sure the names database is located in the same folder/directory as the run.sh and NameSayer.jar files.
+	2. Make sure the names database is located in the same folder/directory as NameSayer.jar.
 	
 			--> OTHERWISE YOU WILL GET ERRORS
 	
 
 * To launch the program
 -----------------------
-	1. In the terminal, change directory to where the NameSayer.jar and run.sh files are located
-	
-	2. Make sure run.sh is executable	>> chmod u+x run.sh
-
-	3. Run the run.sh script 		>> ./run.sh
-
-
-			~ ALTERNATIVE METHOD ~
-
-
 	1. In the terminal, change directory to where the namesayer.jar is located
 
 	2. Run the namesayer.jar file 		>> java -jar NameSayer.jar
