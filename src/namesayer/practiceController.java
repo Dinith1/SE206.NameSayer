@@ -111,7 +111,7 @@ public class practiceController implements Initializable {
 
 	private boolean closePractice = false;
 
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-HHmmss");
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-HHmmss");
 	private Date date;
 
 
