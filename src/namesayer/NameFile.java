@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class NameFile {
-
 	private SimpleStringProperty _fileName;
 	private SimpleStringProperty _listName;
 	private boolean _rating = false;
@@ -86,7 +85,6 @@ public class NameFile {
 			FileWriter fw = new FileWriter("Bad_Ratings.txt", true);
 			fw.write(this.getFileName() + "\n");
 			fw.close();
-			System.out.println("**************** ADDED BAD RATING ****************");
 		} catch(IOException e){
 			e.printStackTrace();
 		}
@@ -117,7 +115,6 @@ public class NameFile {
 			reader.close(); 
 			ratingsFile.delete();
 			tempFile.renameTo(ratingsFile);
-			System.out.println("**************** REMOVED BAD RATING ****************");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

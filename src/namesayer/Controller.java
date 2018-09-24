@@ -179,8 +179,10 @@ public class Controller implements Initializable {
 	// Adds a name from the database to the selected list
 	public void addToSelected() {
 		if (fileSelectedFromDatabase != null) {
-			lvHandler.moveName(fileSelectedFromDatabase, listOfNamesNotSelected, listOfNamesSelected);
-			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+			if(!listOfNamesSelected.contains(fileSelectedFromDatabase)) {
+				lvHandler.moveName(fileSelectedFromDatabase, listOfNamesNotSelected, listOfNamesSelected);
+				lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+			}
 		}
 
 		// This is here to allow changing of scenes in the same window
@@ -201,8 +203,10 @@ public class Controller implements Initializable {
 	// Removes a name from the selected list
 	public void removeFromSelected() {
 		if (fileSelectedFromSelected != null) {
-			lvHandler.moveName(fileSelectedFromSelected, listOfNamesSelected, listOfNamesNotSelected);
-			lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+			if(!listOfNamesNotSelected.contains(fileSelectedFromSelected)) {
+				lvHandler.moveName(fileSelectedFromSelected, listOfNamesSelected, listOfNamesNotSelected);
+				lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+			}
 		}
 	}
 
