@@ -111,10 +111,7 @@ public class practiceController implements Initializable {
 
 	private boolean closePractice = false;
 	
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yy-HHmmss");
-	private Date date;
-
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd-mm-HHmmss");
+	private SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-HHmmss");
 	private Date date;
 
 
@@ -308,13 +305,8 @@ public class practiceController implements Initializable {
 
 	public void handleRecordAction(ActionEvent actionEvent) {
 		date = new Date();
-<<<<<<< HEAD
-		String currentDate = formatter.format(date);
-		String recordingName = currentName.getFileNameWithoutWAV() + currentDate;
-=======
 		String currentTime = formatter.format(date);
 		String recordingName = currentName.getName() + " " + currentTime;
->>>>>>> 943a069bae797a766c77f59f3413754f4a32dd5e
 		String recordCommand = "ffmpeg -f alsa -ac 1 -ar 44100 -i default -t 5 \"" + recordingName + "\".wav";
 		ProcessBuilder recordAudio = new ProcessBuilder("/bin/bash", "-c", recordCommand);
 		recordAudio.directory(creations);
