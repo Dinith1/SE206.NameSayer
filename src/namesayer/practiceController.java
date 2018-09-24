@@ -193,7 +193,6 @@ public class practiceController implements Initializable {
 
 	public void handleArcListClicked(MouseEvent mouseEvent) {
 		selectedArchive = availableListView.getSelectionModel().getSelectedItem();
-		System.out.println(selectedArchive);
 	}
 
 
@@ -275,7 +274,7 @@ public class practiceController implements Initializable {
 						System.out.println("FAILED TO DELETE");
 						e.printStackTrace();
 					}
-					
+
 					currentName.deleteAttempt(fileToDelete);
 					updateArchive();
 					availableListView.getSelectionModel().clearSelection();
@@ -288,7 +287,7 @@ public class practiceController implements Initializable {
 				}
 			}
 		}
-//		updateArchive();
+		//		updateArchive();
 	}
 
 
@@ -409,11 +408,13 @@ public class practiceController implements Initializable {
 
 	public void fillAttemptList() {
 		for (String s : listOfAttempts) {
-			String nameMatch = s.substring(0, s.lastIndexOf(" ") -1);
-			if (currentName.getFileNameWithoutWAV().equals(nameMatch)) {
-				String toAddToList = s.substring(0, s.lastIndexOf("."));
-				if (!currentName.getAttemptList().contains(toAddToList)) {
-					currentName.addAttempt(toAddToList);
+			if (s.lastIndexOf(" ") != -1) {
+				String nameMatch = s.substring(0, s.lastIndexOf(" ")-1);
+				if (currentName.getFileNameWithoutWAV().equals(nameMatch)) {
+					String toAddToList = s.substring(0, s.lastIndexOf("."));
+					if (!currentName.getAttemptList().contains(toAddToList)) {
+						currentName.addAttempt(toAddToList);
+					}
 				}
 			}
 		}

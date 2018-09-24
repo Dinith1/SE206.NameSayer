@@ -182,6 +182,7 @@ public class Controller implements Initializable {
 			if(!listOfNamesSelected.contains(fileSelectedFromDatabase)) {
 				lvHandler.moveName(fileSelectedFromDatabase, listOfNamesNotSelected, listOfNamesSelected);
 				lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+				fileSelectedFromDatabase = null;
 			}
 		}
 
@@ -194,6 +195,7 @@ public class Controller implements Initializable {
 	public void addAllToSelected() {
 		lvHandler.moveWholeList(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
 		lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+		fileSelectedFromDatabase = null;
 
 		// This is here to allow changing of scenes in the same window
 		controllerRoot = addButton.getScene().getRoot();
@@ -206,6 +208,7 @@ public class Controller implements Initializable {
 			if(!listOfNamesNotSelected.contains(fileSelectedFromSelected)) {
 				lvHandler.moveName(fileSelectedFromSelected, listOfNamesSelected, listOfNamesNotSelected);
 				lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+				fileSelectedFromSelected = null;
 			}
 		}
 	}
@@ -214,6 +217,7 @@ public class Controller implements Initializable {
 	public void removeAllFromSelected() {
 		lvHandler.moveWholeList(selectedListView, listOfNamesSelected, namesListView, listOfNamesNotSelected);
 		lvHandler.updateBothLists(namesListView, listOfNamesNotSelected, selectedListView, listOfNamesSelected);
+		fileSelectedFromSelected = null;
 	}
 
 
