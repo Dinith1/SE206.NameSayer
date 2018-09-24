@@ -93,7 +93,7 @@ public class Controller implements Initializable {
 			// Handle duplicate names by numbering them
 			while (listOfNamesNotSelected.contains(listName)) {
 				attempt++;
-				listName = justName + "_" + attempt;
+				listName = justName + "-" + attempt;
 			}
 			listOfNamesNotSelected.add(listName);
 
