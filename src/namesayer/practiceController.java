@@ -293,6 +293,7 @@ public class practiceController implements Initializable {
 					currentName.deleteAttempt(fileToDelete);
 					updateArchive();
 					availableListView.getSelectionModel().clearSelection();
+					selectedArchive = null;
 				}
 			} else {
 				if (!contains) {
@@ -402,6 +403,7 @@ public class practiceController implements Initializable {
 		fillAttemptList();
 		updateArchive();
 		setRatingButton();
+		selectedArchive = null;
 	}
 
 
